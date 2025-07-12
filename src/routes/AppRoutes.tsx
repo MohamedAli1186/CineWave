@@ -1,0 +1,23 @@
+import { Routes, Route } from "react-router-dom";
+import Home from "../pages/Home";
+import MovieDetails from "../pages/MoviePage";
+import Signup from "../pages/Signup";
+import Login from "../pages/Login";
+import WatchList from "../pages/WatchList";
+import MoviePage from "../pages/MoviePage";
+import TVShowPage from "../pages/TVShowPage";
+
+const AppRoutes = () => {
+  return (
+    <Routes>
+      <Route path="/" element={<Home />} />
+      <Route path="/movie/:id" element={<MovieDetails />} />
+      <Route path="/signup" element={<Signup />} />
+      <Route path="/login" element={<Login />} />
+      <Route path="/watchlist" element={<WatchList />} />
+      <Route path="/movies" element={<MoviePage />} />
+      <Route path="/tv-shows" element={<TVShowPage />} />
+    </Routes>
+  );
+};
+export default AppRoutes;
