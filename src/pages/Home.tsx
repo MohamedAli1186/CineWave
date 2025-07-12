@@ -1,5 +1,11 @@
+import Trends from "../components/Trends";
+
 const Home = () => {
-  return <main className="flex flex-col items-center p-container pt-8"></main>;
+  return (
+    <main className="p-container">
+      <Trends />
+    </main>
+  );
 };
 
 export default Home;
