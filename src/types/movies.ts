@@ -38,20 +38,94 @@ export interface ITVShow {
   vote_count: number;
 }
 
-export interface ITrends {
-  adult: false;
-  backdrop_path: "/g62G6aBcAcJv3ClCKmJgmHarHvq.jpg";
-  id: 1061474;
-  title: "Superman";
-  original_title: "Superman";
-  overview: "Superman, a journalist in Metropolis, embarks on a journey to reconcile his Kryptonian heritage with his human upbringing as Clark Kent.";
-  poster_path: "/ombsmhYUqR4qqOLOxAyr5V8hbyv.jpg";
-  media_type: "movie";
-  original_language: "en";
-  genre_ids: [878, 12, 28];
-  popularity: 352.4649;
-  release_date: "2025-07-09";
-  video: false;
-  vote_average: 7.335;
-  vote_count: 303;
+export interface ISearch {
+  adult: boolean;
+  backdrop_path: string | null;
+  id: number;
+  name: string;
+  original_name: string;
+  overview: string;
+  poster_path: string;
+  media_type: string;
+  original_language: string;
+  genre_ids: number[];
+  popularity: number;
+  first_air_date: string;
+  vote_average: number;
+  vote_count: number;
+  origin_country: string[];
+}
+
+export interface IMovie {
+  adult: boolean;
+  backdrop_path: string;
+  belongs_to_collection: null;
+  budget: number;
+  genres: {
+    id: number;
+    name: string;
+  }[];
+  homepage: string;
+  id: number;
+  imdb_id: string;
+  original_language: string;
+  original_title: string;
+  overview: string;
+  popularity: number;
+  poster_path: string;
+  production_companies: {
+    id: number;
+    logo_path: string;
+    name: string;
+    origin_country: string;
+  }[];
+  production_countries: {
+    iso_3166_1: string;
+    name: string;
+  }[];
+  release_date: string;
+  revenue: number;
+  runtime: number;
+  spoken_languages: {
+    english_name: string;
+    iso_639_1: string;
+    name: string;
+  }[];
+  status: string;
+  tagline: string;
+  title: string;
+  video: boolean;
+  vote_average: number;
+  vote_count: number;
+}
+
+export interface IMovieCast {
+  id: number;
+  cast: {
+    adult: boolean;
+    gender: number;
+    id: number;
+    known_for_department: string;
+    name: string;
+    original_name: string;
+    popularity: number;
+    profile_path: string;
+    cast_id: number;
+    character: string;
+    credit_id: string;
+    order: number;
+  }[];
+  crew: {
+    adult: boolean;
+    gender: number;
+    id: number;
+    known_for_department: string;
+    name: string;
+    original_name: string;
+    popularity: number;
+    profile_path: string;
+    credit_id: string;
+    department: string;
+    job: string;
+  }[];
 }

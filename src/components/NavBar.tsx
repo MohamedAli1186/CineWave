@@ -75,7 +75,7 @@ const Navbar = () => {
               <input
                 type="text"
                 placeholder="Search"
-                className="w-32 md:w-64 btn pl-10 rounded-xl!"
+                className="input w-32 md:w-64 pl-10"
                 value={searchQuery}
                 onChange={(e) => handleSearch(e.target.value)}
               />

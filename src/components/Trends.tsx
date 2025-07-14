@@ -3,6 +3,7 @@ import { getTrends } from "../services/tmdb";
 import type { IMovies } from "../types/movies";
 import { Carousel } from "react-responsive-carousel";
 import "react-responsive-carousel/lib/styles/carousel.min.css";
+import { Link } from "react-router-dom";
 
 const Trends = () => {
   const [trends, setTrends] = useState<IMovies[]>([]);
@@ -31,12 +32,13 @@ const Trends = () => {
         swipeable
       >
         {trends.map((movie) => (
-          <div
+          <Link
+            to={`/movie/${movie.id}`}
             key={movie.id}
             className="w-full max-h-[600px] flex items-end justify-center "
           >
             <img
-              src={`https://image.tmdb.org/t/p/w780${movie.backdrop_path}`}
+              src={`https://image.tmdb.org/t/p/w1280${movie.backdrop_path}`}
               alt={movie.title}
               className="inset-0 h-fit w-auto rounded-2xl relative"
               style={{ filter: "brightness(0.70)" }}
@@ -49,7 +51,7 @@ const Trends = () => {
                 {movie.overview ? movie.overview.split(".")[0] + "." : ""}
               </p>
             </div>
-          </div>
+          </Link>
         ))}
       </Carousel>
       <div className="w-full flex justify-end items-start py-3 bg-transparent text-white text-xs sm:text-sm">

@@ -1,16 +1,30 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
 interface PosterCardProps {
   image: string;
   title: string;
   subtitle?: string;
+  id: number;
 }
 
-const PosterCard: React.FC<PosterCardProps> = ({ image, title, subtitle }) => {
+const PosterCard: React.FC<PosterCardProps> = ({
+  image,
+  title,
+  subtitle,
+  id,
+}) => {
   return (
-    <div className="bg-[#40292B] rounded-xl overflow-hidden shadow-lg flex flex-col items-center p-2 hover:scale-105 transition-transform duration-200 cursor-pointer">
+    <Link
+      to={`/movie/${id}`}
+      className="bg-[#40292B] rounded-xl overflow-hidden shadow-lg flex flex-col items-center p-2 hover:scale-105 transition-transform duration-200 cursor-pointer"
+    >
       <img
-        src={`https://image.tmdb.org/t/p/w500${image}`}
+        src={
+          image
+            ? `https://image.tmdb.org/t/p/w500${image}`
+            : "https://image.tmdb.org/t/p/w500/pqeqlmK1KEBfEfABnPjEr7oXjWL.jpg"
+        }
         alt={title}
         className="w-full h-full object-cover rounded-lg mb-3"
       />
@@ -22,7 +36,7 @@ const PosterCard: React.FC<PosterCardProps> = ({ image, title, subtitle }) => {
           {subtitle}
         </p>
       )}
-    </div>
+    </Link>
   );
 };
 

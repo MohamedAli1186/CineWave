@@ -1,159 +1,126 @@
+import { useParams } from "react-router-dom";
+import { getMovie, getMovieCast } from "../services/tmdb";
 import { useEffect, useState } from "react";
-import PosterCard from "../components/PosterCard";
-import { getMovies } from "../services/tmdb";
-import type { IMovies, INode } from "../types/movies";
-
-const genres = [
-  "All Genres",
-  "Adventure",
-  "Sci-Fi",
-  "Drama",
-  "Thriller",
-  "Mystery",
-  "Fantasy",
-  "Documentary",
-  "Romance",
-  "Family",
-];
-const ratings = ["All Ratings", "9+", "8+", "7+", "6+"];
-const years = ["All Years", "2025", "2024", "2023", "2022", "2021"];
+import type { IMovie, IMovieCast } from "../types/movies";
 
 const MoviePage = () => {
-  const [search, setSearch] = useState("");
-  const [genre, setGenre] = useState("All Genres");
-  const [rating, setRating] = useState("All Ratings");
-  const [year, setYear] = useState("All Years");
-  const [pageNo, setPageNo] = useState(1);
-  const [movies, setMovies] = useState<INode<IMovies[]>>();
+  const { id } = useParams();
+  const [movieData, setMovieData] = useState<IMovie>();
+  const [cast, setCast] = useState<IMovieCast>();
 
   useEffect(() => {
-    const fetchMovies = async () => {
-      const res = await getMovies(pageNo);
-      const filtered = res?.results.filter(
-        (m) =>
-          m.original_title.toLowerCase().includes(search.toLowerCase()) ||
-          m.overview.toLowerCase().includes(search.toLowerCase())
-      );
-      setMovies({
-        page: pageNo,
-        results: filtered,
-        total_pages: res?.total_pages,
-        total_results: res?.total_results,
-      });
+    const fetchMovie = async () => {
+      const res = await getMovie(+id!);
+      setMovieData(res);
+      const castRes = await getMovieCast(+id!);
+      setCast(castRes);
     };
-    fetchMovies();
-  }, [pageNo, search]);
+    fetchMovie();
+  }, [id]);
+
+  if (!movieData || !cast) return <p className="text-white p-8">Loading...</p>;
 
   return (
-    <main className="min-h-screen bg-[#1f1414] w-full flex flex-col items-center p-container pt-8">
-      {/* Search Bar */}
-      <div className="w-full mb-6">
-        <input
-          type="text"
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          placeholder="Search for movies, TV shows, people..."
-          className="w-full bg-[#2d1e1e] text-white px-5 py-3 rounded-2xl text-lg focus:outline-none focus:ring-2 focus:ring-[#E8B5B8] shadow-md"
+    <main className="pb-20 w-full flex flex-col items-start p-container pt-8">
+      {/* Backdrop */}
+      <div className="w-full relative mb-10">
+        <img
+          src={`https://image.tmdb.org/t/p/w1280${movieData?.backdrop_path}`}
+          alt={movieData?.title}
+          className="w-full h-[550px] object-cover rounded-lg"
         />
+        <div className="absolute bottom-0 left-0 bg-gradient-to-t from-[#1f1414] to-transparent w-full h-40 rounded-b-lg" />
       </div>
 
-      {/* Filters */}
-      <div className="flex flex-wrap gap-4 mb-8 w-full justify-start">
-        <select
-          value={genre}
-          onChange={(e) => setGenre(e.target.value)}
-          className="bg-[#40292B] text-white cursor-pointer px-4 py-2 rounded-xl focus:outline-none"
-        >
-          {genres.map((g) => (
-            <option key={g}>{g}</option>
-          ))}
-        </select>
-        <select
-          value={rating}
-          onChange={(e) => setRating(e.target.value)}
-          className="bg-[#40292B] text-white cursor-pointer px-4 py-2 rounded-xl focus:outline-none"
-        >
-          {ratings.map((r) => (
-            <option key={r}>{r}</option>
-          ))}
-        </select>
-        <select
-          value={year}
-          onChange={(e) => setYear(e.target.value)}
-          className="bg-[#40292B] text-white cursor-pointer px-4 py-2 rounded-xl focus:outline-none"
-        >
-          {years.map((y) => (
-            <option key={y}>{y}</option>
-          ))}
-        </select>
-      </div>
+      {/* Main Info Section */}
+      <section className="flex flex-col lg:flex-row w-full gap-10">
+        {/* Poster */}
+        <img
+          src={`https://image.tmdb.org/t/p/w500${movieData?.poster_path}`}
+          alt={movieData?.title}
+          className="w-64 rounded-lg shadow-lg"
+        />
 
-      {/* Movie Poster Grid */}
-      {movies?.results?.length === 0 && (
-        <div className="flex items-center justify-center w-full h-full">
-          <div>No results found</div>
-        </div>
-      )}
-      {movies && movies?.results?.length === 0 ? (
-        <div className="flex items-center justify-center w-full h-full">
-          <div>Loading...</div>
-        </div>
-      ) : (
-        <>
-          <section className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 w-full mb-8">
-            {movies?.results?.map((movie, i) => (
-              <PosterCard
-                key={movie.original_title + i}
-                image={movie.poster_path}
-                title={movie.original_title}
-                subtitle={movie.overview}
-              />
-            ))}
-          </section>
+        {/* Movie Info */}
+        <div className="flex flex-col gap-4">
+          <h1 className="text-4xl font-bold">{movieData?.title}</h1>
+          {movieData?.tagline && (
+            <p className="text-lg italic text-gray-300">{movieData?.tagline}</p>
+          )}
 
-          <div className="flex items-center gap-2 mb-10">
-            <button
-              onClick={() => setPageNo((p) => Math.max(1, p - 1))}
-              disabled={pageNo === 1}
-              className={`w-8 h-8 rounded-full flex items-center justify-center text-white cursor-pointer ${
-                pageNo === 1
-                  ? "opacity-40 cursor-not-allowed"
-                  : "hover:bg-[#40292B]"
-              }`}
-            >
-              {"<"}
-            </button>
-            {Array.from({ length: 10 }, (_, i) => (
-              <button
-                key={i}
-                onClick={() => {
-                  setPageNo(i + 1);
-                  window.scrollTo({ top: 0, behavior: "smooth" });
-                }}
-                className={`w-8 h-8 rounded-full flex items-center cursor-pointer justify-center ${
-                  pageNo === i + 1
-                    ? "bg-[#E8B5B8] text-[#1F1414]"
-                    : "text-white hover:bg-[#40292B]"
-                }`}
-              >
-                {i + 1}
-              </button>
-            ))}
-            <button
-              onClick={() =>
-                setPageNo((p) => Math.min(movies!.total_pages, p + 1))
-              }
-              disabled={pageNo === movies?.total_pages}
-              className={`w-8 h-8 rounded-full flex items-center justify-center text-white cursor-pointer ${
-                pageNo === movies?.total_pages
-                  ? "opacity-40 cursor-not-allowed"
-                  : "hover:bg-[#40292B]"
-              }`}
-            >
-              {">"}
-            </button>
+          <div className="text-sm flex gap-6 text-gray-400">
+            <p>🗓️ {movieData?.release_date}</p>
+            <p>⏱️ {movieData?.runtime} min</p>
+            <p>
+              ⭐ {movieData?.vote_average} ({movieData?.vote_count} votes)
+            </p>
           </div>
-        </>
+
+          {/* Genres */}
+          <div className="flex flex-wrap gap-2 mt-2">
+            {movieData?.genres.map((genre) => (
+              <span
+                key={genre.id}
+                className="px-3 py-1 bg-[#40292B] rounded-full text-sm"
+              >
+                {genre.name}
+              </span>
+            ))}
+          </div>
+
+          {/* Overview */}
+          <p className="text-base text-start leading-relaxed mt-4">
+            {movieData?.overview}
+          </p>
+
+          {/* Budget and Revenue */}
+          <div className="text-sm flex gap-6 text-gray-400">
+            <p>💰 Budget: ${movieData?.budget.toLocaleString("en-US")}</p>
+            <p>💰 Revenue: ${movieData?.revenue.toLocaleString("en-US")}</p>
+          </div>
+        </div>
+      </section>
+
+      {/* Cast */}
+      {cast?.cast?.length > 0 && (
+        <section className="mt-12 w-full">
+          <h2 className="text-3xl text-start font-semibold mb-6">Cast</h2>
+          <div className="flex flex-wrap gap-6">
+            {cast?.cast?.map((person) => (
+              <div key={person.id} className="flex items-center gap-3">
+                <img
+                  src={`https://image.tmdb.org/t/p/w200${person.profile_path}`}
+                  alt={person.name}
+                  className="h-10 object-contain"
+                />
+                <span className="text-sm">{person.name}</span>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {/* Production Companies */}
+      {movieData?.production_companies.length > 0 && (
+        <section className="mt-12 w-full">
+          <h2 className="text-3xl text-start font-semibold mb-6">
+            Production Companies
+          </h2>
+          <div className="flex flex-wrap gap-6">
+            {movieData?.production_companies.map((company) => (
+              <div key={company.id} className="flex items-center gap-3">
+                {company.logo_path && (
+                  <img
+                    src={`https://image.tmdb.org/t/p/w200${company.logo_path}`}
+                    alt={company.name}
+                    className="h-10 object-contain"
+                  />
+                )}
+                <span className="text-sm">{company.name}</span>
+              </div>
+            ))}
+          </div>
+        </section>
       )}
     </main>
   );

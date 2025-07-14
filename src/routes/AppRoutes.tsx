@@ -4,7 +4,7 @@ import MovieDetails from "../pages/MoviePage";
 import Signup from "../pages/Signup";
 import Login from "../pages/Login";
 import WatchList from "../pages/WatchList";
-import MoviePage from "../pages/MoviePage";
+import Movies from "../pages/Movies";
 import TVShowPage from "../pages/TVShowPage";
 
 const AppRoutes = () => {
@@ -15,7 +15,7 @@ const AppRoutes = () => {
       <Route path="/signup" element={<Signup />} />
       <Route path="/login" element={<Login />} />
       <Route path="/watchlist" element={<WatchList />} />
-      <Route path="/movies" element={<MoviePage />} />
+      <Route path="/movies" element={<Movies />} />
       <Route path="/tv-shows" element={<TVShowPage />} />
     </Routes>
   );

@@ -1,8 +1,9 @@
 import { useEffect, useRef, useState } from "react";
 import PosterCard from "../components/PosterCard";
-import { getTVShows } from "../services/tmdb";
-import type { ITVShow, INode } from "../types/movies";
+import { getMovies } from "../services/tmdb";
+import type { IMovies, INode } from "../types/movies";
 import SearchMulti from "../components/SearchMulti";
+import Pagination from "../components/Pagination";
 
 const genres = [
   "All Genres",
@@ -19,36 +20,33 @@ const genres = [
 const ratings = ["All Ratings", "9+", "8+", "7+", "6+"];
 const years = ["All Years", "2025", "2024", "2023", "2022", "2021"];
 
-const TVShowPage = () => {
+const Movies = () => {
+  const direction = useRef(null);
   const [genre, setGenre] = useState("All Genres");
   const [rating, setRating] = useState("All Ratings");
   const [year, setYear] = useState("All Years");
   const [pageNo, setPageNo] = useState(1);
-  const [tvShows, setTvShows] = useState<INode<ITVShow[]>>();
-  const direction = useRef(null);
+  const [movies, setMovies] = useState<INode<IMovies[]>>();
 
   useEffect(() => {
-    const fetchTVShows = async () => {
-      const res = await getTVShows(pageNo);
-      setTvShows({
+    const fetchMovies = async () => {
+      const res = await getMovies(pageNo);
+      setMovies({
         page: pageNo,
         results: res?.results,
         total_pages: res?.total_pages,
         total_results: res?.total_results,
       });
     };
-    fetchTVShows();
+    fetchMovies();
   }, [pageNo]);
-
-  console.log(tvShows);
 
   return (
     <main className="min-h-screen bg-[#1f1414] w-full flex flex-col items-center p-container pt-8">
       {/* Search Bar */}
       <SearchMulti />
-
       <h1 className="text-4xl font-bold mb-6" ref={direction}>
-        TV Shows
+        Movies
       </h1>
 
       {/* Filters */}
@@ -86,75 +84,39 @@ const TVShowPage = () => {
       </div>
 
       {/* Movie Poster Grid */}
-      {tvShows?.results?.length === 0 && (
+      {movies?.results?.length === 0 && (
         <div className="flex items-center justify-center w-full h-full">
           <div>No results found</div>
         </div>
       )}
-      {tvShows && tvShows?.results?.length === 0 ? (
+      {movies && movies?.results?.length === 0 ? (
         <div className="flex items-center justify-center w-full h-full">
           <div>Loading...</div>
         </div>
       ) : (
         <>
           <section className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 w-full mb-8">
-            {tvShows?.results?.map((tvShow, i) => (
+            {movies?.results?.map((movie, i) => (
               <PosterCard
-                id={tvShow.id}
-                key={tvShow.id + i}
-                image={tvShow.poster_path}
-                title={tvShow.name}
-                subtitle={tvShow.overview}
+                id={movie.id}
+                key={movie.original_title + i}
+                image={movie.poster_path}
+                title={movie.original_title}
+                subtitle={movie.overview}
               />
             ))}
           </section>
 
-          <div className="flex items-center gap-2 mb-10">
-            <button
-              onClick={() => setPageNo((p) => Math.max(1, p - 1))}
-              disabled={pageNo === 1}
-              className={`w-8 h-8 rounded-full flex items-center justify-center text-white cursor-pointer ${
-                pageNo === 1
-                  ? "opacity-40 cursor-not-allowed"
-                  : "hover:bg-[#40292B]"
-              }`}
-            >
-              {"<"}
-            </button>
-            {Array.from({ length: 10 }, (_, i) => (
-              <button
-                key={i}
-                onClick={() => {
-                  setPageNo(i + 1);
-                  window.scrollTo({ top: 0, behavior: "smooth" });
-                }}
-                className={`w-8 h-8 rounded-full flex items-center cursor-pointer justify-center ${
-                  pageNo === i + 1
-                    ? "bg-[#E8B5B8] text-[#1F1414]"
-                    : "text-white hover:bg-[#40292B]"
-                }`}
-              >
-                {i + 1}
-              </button>
-            ))}
-            <button
-              onClick={() =>
-                setPageNo((p) => Math.min(tvShows!.total_pages, p + 1))
-              }
-              disabled={pageNo === tvShows?.total_pages}
-              className={`w-8 h-8 rounded-full flex items-center justify-center text-white cursor-pointer ${
-                pageNo === tvShows?.total_pages
-                  ? "opacity-40 cursor-not-allowed"
-                  : "hover:bg-[#40292B]"
-              }`}
-            >
-              {">"}
-            </button>
-          </div>
+          <Pagination
+            direction={direction}
+            pageNo={pageNo}
+            setPageNo={setPageNo}
+            total_pages={movies?.total_pages || 1}
+          />
         </>
       )}
     </main>
   );
 };
 
-export default TVShowPage;
+export default Movies;
