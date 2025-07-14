@@ -5,18 +5,14 @@ import { useState } from "react";
 import MobileSidebar from "./MobileSidebar";
 
 const Navbar = () => {
-  const [searchQuery, setSearchQuery] = useState<string>("");
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const handleSearch = (query: string) => {
-    setSearchQuery(query);
-  };
 
   return (
     <>
       {/* Mobile Sidebar */}
       <MobileSidebar open={sidebarOpen} onClose={() => setSidebarOpen(false)} />
-      <nav className="flex justify-between items-center px-4 md:px-10 py-3 border-b border-gray-100 relative z-30 w-full">
+      <nav className="flex justify-between items-center px-4 md:px-10 py-3 border-b-[0.1px] bg-[#2b1b1b] border-gray-100  z-50 w-full fixed top-0">
         {/* Left: Logo & Hamburger */}
         <div className="flex items-center gap-4 md:gap-10">
           {/* Hamburger for mobile */}
@@ -72,13 +68,6 @@ const Navbar = () => {
             </Link>
           ) : (
             <div className="relative flex items-center gap-4">
-              <input
-                type="text"
-                placeholder="Search"
-                className="input w-32 md:w-64 pl-10"
-                value={searchQuery}
-                onChange={(e) => handleSearch(e.target.value)}
-              />
               <img src={profile} alt="Profile" className="w-10 h-auto" />
             </div>
           )}

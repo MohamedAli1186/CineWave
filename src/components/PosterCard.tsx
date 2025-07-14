@@ -1,11 +1,13 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import broken from "../../public/broke.webp";
 
 interface PosterCardProps {
   image: string;
   title: string;
   subtitle?: string;
   id: number;
+  type?: "movie" | "tv";
 }
 
 const PosterCard: React.FC<PosterCardProps> = ({
@@ -13,20 +15,17 @@ const PosterCard: React.FC<PosterCardProps> = ({
   title,
   subtitle,
   id,
+  type,
 }) => {
   return (
     <Link
-      to={`/movie/${id}`}
-      className="bg-[#40292B] rounded-xl overflow-hidden shadow-lg flex flex-col items-center p-2 hover:scale-105 transition-transform duration-200 cursor-pointer"
+      to={type === "movie" ? `/movie/${id}` : `/tv/${id}`}
+      className="bg-[#40292B] rounded-xl overflow-hidden shadow-lg flex flex-col items-center pb-2 cursor-pointer"
     >
       <img
-        src={
-          image
-            ? `https://image.tmdb.org/t/p/w500${image}`
-            : "https://image.tmdb.org/t/p/w500/pqeqlmK1KEBfEfABnPjEr7oXjWL.jpg"
-        }
+        src={image ? `https://image.tmdb.org/t/p/w500${image}` : broken}
         alt={title}
-        className="w-full h-full object-cover rounded-lg mb-3"
+        className="w-full h-full object-cover mb-3 hover:scale-105 transition-transform duration-200"
       />
       <h3 className="text-lg font-semibold mb-1 text-white text-center truncate w-full px-1">
         {title}

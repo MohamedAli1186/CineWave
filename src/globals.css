@@ -1,10 +1,25 @@
 @import "tailwindcss";
+
 #root {
   margin: 0 auto;
   text-align: center;
   font-family: "DM Sans", sans-serif;
   background-color: #1f1414;
   color: #fff;
+}
+@layer utilities {
+  @keyframes shine {
+    0% {
+      background-position: 100%;
+    }
+    100% {
+      background-position: -100%;
+    }
+  }
+
+  .animate-shine {
+    animation: shine 5s linear infinite;
+  }
 }
 
 @keyframes logo-spin {

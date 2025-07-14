@@ -1,22 +1,18 @@
 import { useEffect, useRef, useState } from "react";
-import PosterCard from "../components/PosterCard";
-import { getMovies } from "../services/tmdb";
-import type { IMovies, INode } from "../types/movies";
-import SearchMulti from "../components/SearchMulti";
-import Pagination from "../components/Pagination";
+import Pagination from "./Pagination";
+import PosterCard from "./PosterCard";
+import type { INode, IMovies } from "../types/movies";
+import { getPopularMovies } from "../services/tmdb";
 import ShinyText from "../blocks/TextAnimations/ShinyText/ShinyText";
-import MoviesFiltering from "../components/MoviesFiltering";
 
-const Movies = () => {
-  const direction = useRef(null);
-  const [genre, setGenre] = useState<number>();
-  const [year, setYear] = useState<number>();
+const PopularMovies = () => {
   const [pageNo, setPageNo] = useState(1);
   const [movies, setMovies] = useState<INode<IMovies[]>>();
+  const direction = useRef(null);
 
   useEffect(() => {
     const fetchMovies = async () => {
-      const res = await getMovies(pageNo, genre, year);
+      const res = await getPopularMovies(pageNo);
       setMovies({
         page: pageNo,
         results: res?.results,
@@ -25,25 +21,16 @@ const Movies = () => {
       });
     };
     fetchMovies();
-  }, [pageNo, genre, year]);
-
+  }, [pageNo]);
   return (
-    <main className="min-h-screen mt-16 bg-[#1f1414] w-full flex flex-col items-center p-container pt-8">
-      <SearchMulti />
+    <div>
       <ShinyText
         ref={direction}
-        text="Movies"
+        text="Top Rated Movies"
         disabled={false}
         speed={3}
         className="mb-8"
       />
-      <MoviesFiltering
-        genre={genre}
-        setGenre={setGenre}
-        year={year}
-        setYear={setYear}
-      />
-
       {movies?.results?.length === 0 && (
         <div className="flex items-center justify-center w-full h-full">
           <div>No results found</div>
@@ -58,11 +45,10 @@ const Movies = () => {
           <section className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 w-full mb-8">
             {movies?.results?.map((movie, i) => (
               <PosterCard
-                type="movie"
                 id={movie.id}
-                key={movie.original_title + i}
+                key={movie.id + i}
                 image={movie.poster_path}
-                title={movie.original_title}
+                title={movie.title}
                 subtitle={movie.overview}
               />
             ))}
@@ -76,8 +62,8 @@ const Movies = () => {
           />
         </>
       )}
-    </main>
+    </div>
   );
 };
 
-export default Movies;
+export default PopularMovies;

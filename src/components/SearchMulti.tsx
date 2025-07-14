@@ -32,7 +32,7 @@ const SearchMulti = () => {
         type="text"
         value={search}
         onChange={(e) => setSearch(e.target.value)}
-        placeholder="Search for movies, TV shows, people..."
+        placeholder="Search for movies, TV shows..."
         className="w-full bg-[#2d1e1e] text-white px-5 py-3 rounded-2xl text-lg focus:outline-none focus:ring-2 focus:ring-[#E8B5B8] shadow-md"
       />
       {results.results.length > 0 && (

@@ -16,7 +16,7 @@ const links = [
 const MobileSidebar: React.FC<MobileSidebarProps> = ({ open, onClose }) => {
   return (
     <div
-      className={`fixed inset-0 z-40 bg-black bg-opacity-40 transition-opacity duration-300 ${
+      className={`fixed inset-0 z-40 bg-black/75 bg-opacity-40 pt-20 transition-opacity duration-300 ${
         open
           ? "opacity-100 pointer-events-auto"
           : "opacity-0 pointer-events-none"
@@ -24,7 +24,7 @@ const MobileSidebar: React.FC<MobileSidebarProps> = ({ open, onClose }) => {
       onClick={onClose}
     >
       <aside
-        className={`fixed left-0 top-0 h-full w-64 bg-[#253235] shadow-lg z-50 transform transition-transform duration-300 ${
+        className={`fixed left-0 top-0 h-full w-64 pt-20 bg-[#253235] shadow-lg z-50 transform transition-transform duration-300 ${
           open ? "translate-x-0" : "-translate-x-full"
         }`}
         onClick={(e) => e.stopPropagation()}

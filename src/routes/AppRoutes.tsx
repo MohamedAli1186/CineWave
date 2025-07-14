@@ -6,12 +6,14 @@ import Login from "../pages/Login";
 import WatchList from "../pages/WatchList";
 import Movies from "../pages/Movies";
 import TVShowPage from "../pages/TVShowPage";
+import TVPage from "../pages/TV";
 
 const AppRoutes = () => {
   return (
     <Routes>
       <Route path="/" element={<Home />} />
       <Route path="/movie/:id" element={<MovieDetails />} />
+      <Route path="/tv/:id" element={<TVPage />} />
       <Route path="/signup" element={<Signup />} />
       <Route path="/login" element={<Login />} />
       <Route path="/watchlist" element={<WatchList />} />

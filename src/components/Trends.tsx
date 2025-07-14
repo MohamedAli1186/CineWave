@@ -18,32 +18,33 @@ const Trends = () => {
   }, []);
 
   return (
-    <section className="mx-auto mt-5">
+    <section className="mx-auto pt-10">
       <Carousel
         showThumbs={false}
         showStatus={false}
         showIndicators={false}
         autoPlay
         infiniteLoop
-        interval={7000}
+        interval={5000}
+        transitionTime={500}
+        showArrows={true}
         selectedItem={currentIndex}
         onChange={setCurrentIndex}
         stopOnHover={false}
-        swipeable
+        swipeable={true}
       >
         {trends.map((movie) => (
           <Link
             to={`/movie/${movie.id}`}
             key={movie.id}
-            className="w-full max-h-[600px] flex items-end justify-center "
+            className="max-h-[630px] flex items-end justify-center"
           >
             <img
               src={`https://image.tmdb.org/t/p/w1280${movie.backdrop_path}`}
               alt={movie.title}
-              className="inset-0 h-fit w-auto rounded-2xl relative"
-              style={{ filter: "brightness(0.70)" }}
+              className="inset-0 h-fit w-auto rounded-2xl relative opacity-75 "
             />
-            <div className="absolute bottom-0 z-10 p-8 w-full text-start">
+            <div className="absolute bottom-0 z-10 md:p-8 p-4 w-full text-start">
               <h2 className="text-lg md:text-2xl lg:text-6xl font-bold mb-2">
                 Trending Now: {movie.title}
               </h2>

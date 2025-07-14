@@ -4,16 +4,24 @@ import type {
   IMovies,
   INode,
   ISearch,
+  ITVSeries,
   ITVShow,
+  ITVShows,
 } from "../types/movies";
 import type { ISession } from "../types/user";
 
 const API_KEY = import.meta.env.VITE_TMDB_API_KEY;
 const BASE_URL = "https://api.themoviedb.org/3";
 
-export const getMovies = async (page: number) => {
+export const getMovies = async (
+  page: number,
+  genre?: number,
+  year?: number
+) => {
   const res = await fetch(
-    `${BASE_URL}/discover/movie?include_adult=false&include_video=false&language=en-US&page=${page}&sort_by=popularity.desc`,
+    `${BASE_URL}/discover/movie?include_adult=false&include_video=false&language=en-US&page=${page}${
+      year ? `&primary_release_year=${year}` : ""
+    }&sort_by=popularity.desc${genre ? `&with_genres=${genre}` : ""}`,
     {
       headers: {
         accept: "application/json",
@@ -36,6 +44,17 @@ export const getMovie = async (id: number) => {
   return data;
 };
 
+export const getTvShow = async (id: number) => {
+  const res = await fetch(`${BASE_URL}/tv/${id}?language=en-US`, {
+    headers: {
+      accept: "application/json",
+      Authorization: API_KEY,
+    },
+  });
+  const data: ITVShows = await res.json();
+  return data;
+};
+
 export const getMovieCast = async (id: number) => {
   const res = await fetch(`${BASE_URL}/movie/${id}/credits?language=en-US`, {
     headers: {
@@ -47,9 +66,22 @@ export const getMovieCast = async (id: number) => {
   return data;
 };
 
-export const getTVShows = async (page: number) => {
+export const getTVShowCast = async (id: number) => {
+  const res = await fetch(`${BASE_URL}/tv/${id}/credits?language=en-US`, {
+    headers: {
+      accept: "application/json",
+      Authorization: API_KEY,
+    },
+  });
+  const data: IMovieCast = await res.json();
+  return data;
+};
+
+export const getTVShows = async (page: number, genre?: number) => {
   const res = await fetch(
-    `${BASE_URL}/discover/tv?include_adult=false&include_null_first_air_dates=false&language=en-US&page=${page}&sort_by=popularity.desc`,
+    `${BASE_URL}/discover/tv?include_adult=false&include_null_first_air_dates=false&language=en-US&page=${page}&sort_by=popularity.desc${
+      genre ? `&with_genres=${genre}` : ""
+    }`,
     {
       headers: {
         accept: "application/json",
@@ -113,7 +145,55 @@ export const createSession = async (request_token: string) => {
       }),
     }
   );
-  console.log(res);
   const data: ISession = await res.json();
+  return data;
+};
+
+export const getMovieGenres = async () => {
+  const res = await fetch(`${BASE_URL}/genre/movie/list?language=en`, {
+    headers: {
+      accept: "application/json",
+      Authorization: API_KEY,
+    },
+  });
+  const data: { genres: [{ id: number; name: string }] } = await res.json();
+  return data;
+};
+export const getTVGenres = async () => {
+  const res = await fetch(`${BASE_URL}/genre/tv/list?language=en`, {
+    headers: {
+      accept: "application/json",
+      Authorization: API_KEY,
+    },
+  });
+  const data: { genres: [{ id: number; name: string }] } = await res.json();
+  return data;
+};
+
+export const getTvSeries = async (page: number) => {
+  const res = await fetch(
+    `${BASE_URL}/tv/top_rated?language=en-US&page=${page}`,
+    {
+      headers: {
+        accept: "application/json",
+        Authorization: API_KEY,
+      },
+    }
+  );
+  const data: INode<ITVSeries[]> = await res.json();
+  return data;
+};
+
+export const getPopularMovies = async (page: number) => {
+  const res = await fetch(
+    `${BASE_URL}/movie/top_rated?language=en-US&page=${page}`,
+    {
+      headers: {
+        accept: "application/json",
+        Authorization: API_KEY,
+      },
+    }
+  );
+  const data: INode<IMovies[]> = await res.json();
   return data;
 };
