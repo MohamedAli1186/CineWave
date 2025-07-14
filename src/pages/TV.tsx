@@ -138,7 +138,6 @@ const TVPage = () => {
           </div>
         </section>
       )}
-
       {/* Production Companies */}
       {tvShowData?.production_companies.length > 0 && (
         <section className="mt-12 w-full">

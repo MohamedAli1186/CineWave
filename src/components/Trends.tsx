@@ -7,7 +7,7 @@ import { Link } from "react-router-dom";
 
 const Trends = () => {
   const [trends, setTrends] = useState<IMovies[]>([]);
-  const [currentIndex, setCurrentIndex] = useState(0);
+  const [currentIndex, setCurrentIndex] = useState<number>(0);
 
   useEffect(() => {
     const fetchTrends = async () => {
@@ -26,7 +26,6 @@ const Trends = () => {
         autoPlay
         infiniteLoop
         interval={5000}
-        transitionTime={500}
         showArrows={true}
         selectedItem={currentIndex}
         onChange={setCurrentIndex}

@@ -24,7 +24,7 @@ const MoviePage = () => {
   return (
     <main className="pb-20 w-full flex flex-col items-start p-container pt-8">
       {/* Backdrop */}
-      <div className="w-full relative mb-10">
+      <div className="w-full relative mb-10 pt-8">
         <img
           src={`https://image.tmdb.org/t/p/w1280${movieData?.backdrop_path}`}
           alt={movieData?.title}
