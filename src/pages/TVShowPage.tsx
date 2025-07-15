@@ -26,8 +26,6 @@ const TVShowPage = () => {
     fetchTVShows();
   }, [pageNo, genre]);
 
-  console.log(tvShows);
-
   return (
     <main className="min-h-screen mt-16 bg-[#1f1414] w-full flex flex-col items-center p-container pt-8">
       {/* Search Bar */}
@@ -36,7 +34,7 @@ const TVShowPage = () => {
       <ShinyText
         ref={direction}
         text="TV Shows"
-        className="mb-6"
+        className="my-6"
         disabled={false}
         speed={3}
       />

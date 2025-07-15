@@ -35,7 +35,7 @@ const Movies = () => {
         text="Movies"
         disabled={false}
         speed={3}
-        className="mb-8"
+        className="my-8"
       />
       <MoviesFiltering
         genre={genre}

@@ -21,6 +21,7 @@ export interface IMovies {
   vote_average: number;
   vote_count: number;
 }
+
 export interface ITVShow {
   adult: boolean;
   backdrop_path: string;
@@ -43,9 +44,11 @@ export interface ISearch {
   backdrop_path: string | null;
   id: number;
   name: string;
+  title: string;
   original_name: string;
   overview: string;
   poster_path: string;
+  profile_path: string;
   media_type: string;
   original_language: string;
   genre_ids: number[];
@@ -130,6 +133,38 @@ export interface IMovieCast {
   }[];
 }
 
+export interface IActorInfo {
+  adult: boolean;
+  also_known_as: string[];
+  biography: string;
+  birthday: string;
+  deathday: string | null;
+  gender: number;
+  homepage: string | null;
+  id: number;
+  imdb_id: string;
+  known_for_department: string;
+  name: string;
+  place_of_birth: string;
+  popularity: number;
+  profile_path: string;
+}
+
+export interface IActor {
+  adult: boolean;
+  gender: number;
+  id: number;
+  known_for_department: string;
+  name: string;
+  original_name: string;
+  popularity: number;
+  profile_path: string;
+  cast_id: number;
+  character: string;
+  credit_id: string;
+  order: number;
+}
+
 export interface ITVSeries {
   adult: boolean;
   backdrop_path: string;
@@ -178,7 +213,21 @@ export interface ITVShows {
     still_path: null;
   };
   name: string;
-  next_episode_to_air: null;
+  next_episode_to_air: {
+    id: number;
+    name: string;
+    overview: string;
+    vote_average: number;
+    vote_count: number;
+    air_date: string;
+    episode_number: number;
+    episode_type: string;
+    production_code: string;
+    runtime: number;
+    season_number: number;
+    show_id: number;
+    still_path: null;
+  } | null;
   networks: {
     id: number;
     logo_path: string;

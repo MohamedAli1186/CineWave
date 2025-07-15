@@ -23,7 +23,7 @@ const PopularTvSeries = () => {
     fetchTvSeries();
   }, [pageNo]);
   return (
-    <div>
+    <div className="mt-8">
       <ShinyText
         ref={direction}
         text="Top Rated TV Series"

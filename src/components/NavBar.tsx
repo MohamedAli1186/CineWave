@@ -1,8 +1,8 @@
 import { Link } from "react-router-dom";
 import logo from "../../public/CineWave.png";
-import profile from "../../public/profile.png";
 import { useState } from "react";
 import MobileSidebar from "./MobileSidebar";
+import SearchMulti from "./SearchMulti";
 
 const Navbar = () => {
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
@@ -35,29 +35,45 @@ const Navbar = () => {
           {/* Nav Links: hidden on mobile */}
           <ul className="hidden md:flex space-x-4 pt-2">
             <li>
-              <Link to="/" className="hover:text-gray-200">
+              <Link
+                to="/"
+                className="hover:text-gray-200"
+                onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+              >
                 Home
               </Link>
             </li>
             <li>
-              <Link to="/movies" className="hover:text-gray-200">
+              <Link
+                to="/movies"
+                className="hover:text-gray-200"
+                onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+              >
                 Movies
               </Link>
             </li>
             <li>
-              <Link to="/tv-shows" className="hover:text-gray-200">
+              <Link
+                to="/tv-shows"
+                className="hover:text-gray-200"
+                onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+              >
                 TV Shows
               </Link>
             </li>
             <li>
-              <Link to="/watchlist" className="hover:text-gray-200">
+              <Link
+                to="/watchlist"
+                className="hover:text-gray-200"
+                onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+              >
                 Watchlist
               </Link>
             </li>
           </ul>
         </div>
         {/* Right: Search/Profile/Signup */}
-        <div className="flex items-center space-x-4">
+        <div className="flex items-center">
           {isLoggedIn ? (
             <Link
               to="/signup"
@@ -68,7 +84,8 @@ const Navbar = () => {
             </Link>
           ) : (
             <div className="relative flex items-center gap-4">
-              <img src={profile} alt="Profile" className="w-10 h-auto" />
+              <SearchMulti />
+              {/* <img src={profile} alt="Profile" className="w-10 h-auto" /> */}
             </div>
           )}
         </div>

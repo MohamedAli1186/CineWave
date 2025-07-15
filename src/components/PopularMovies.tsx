@@ -29,7 +29,7 @@ const PopularMovies = () => {
         text="Top Rated Movies"
         disabled={false}
         speed={3}
-        className="mb-8"
+        className="my-8"
       />
       {movies?.results?.length === 0 && (
         <div className="flex items-center justify-center w-full h-full">
@@ -46,6 +46,7 @@ const PopularMovies = () => {
             {movies?.results?.map((movie, i) => (
               <PosterCard
                 id={movie.id}
+                type="movie"
                 key={movie.id + i}
                 image={movie.poster_path}
                 title={movie.title}
@@ -53,7 +54,6 @@ const PopularMovies = () => {
               />
             ))}
           </section>
-
           <Pagination
             direction={direction}
             pageNo={pageNo}

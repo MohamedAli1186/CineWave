@@ -41,7 +41,10 @@ const MobileSidebar: React.FC<MobileSidebarProps> = ({ open, onClose }) => {
               key={link.to}
               to={link.to}
               className="text-white text-lg font-medium hover:text-[#E8B5B8] transition-colors"
-              onClick={onClose}
+              onClick={() => {
+                onClose();
+                window.scrollTo({ top: 0, behavior: "smooth" });
+              }}
             >
               {link.label}
             </Link>

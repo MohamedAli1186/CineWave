@@ -1,13 +1,35 @@
-import { useParams } from "react-router-dom";
-import { getMovie, getMovieCast } from "../services/tmdb";
+import { Link, useParams } from "react-router-dom";
+import { getMovie, getMovieCast, getSimilarMovies } from "../services/tmdb";
 import { useEffect, useState } from "react";
-import type { IMovie, IMovieCast } from "../types/movies";
-import broken from "../../public/broke.webp";
+import type { IMovie, IMovieCast, IMovies } from "../types/movies";
+import PosterCard from "../components/PosterCard";
+import Carousel from "react-multi-carousel";
+import "react-multi-carousel/lib/styles.css";
+import Cast from "../components/Cast";
+import ProductionCompanies from "../components/ProductionCompanies";
 
+const responsive = {
+  desktop: {
+    breakpoint: { max: 3000, min: 1024 },
+    items: 4,
+    slidesToSlide: 1, // optional, default to 1.
+  },
+  tablet: {
+    breakpoint: { max: 1024, min: 464 },
+    items: 3,
+    slidesToSlide: 1, // optional, default to 1.
+  },
+  mobile: {
+    breakpoint: { max: 464, min: 0 },
+    items: 2,
+    slidesToSlide: 1, // optional, default to 1.
+  },
+};
 const MoviePage = () => {
   const { id } = useParams();
   const [movieData, setMovieData] = useState<IMovie>();
   const [cast, setCast] = useState<IMovieCast>();
+  const [similarMovies, setSimilarMovies] = useState<IMovies[]>();
 
   useEffect(() => {
     const fetchMovie = async () => {
@@ -15,16 +37,19 @@ const MoviePage = () => {
       setMovieData(res);
       const castRes = await getMovieCast(+id!);
       setCast(castRes);
+      const similarMoviesRes = await getSimilarMovies(+id!);
+      setSimilarMovies(similarMoviesRes.results);
     };
     fetchMovie();
   }, [id]);
 
-  if (!movieData || !cast) return <p className="text-white p-8">Loading...</p>;
+  if (!movieData || !cast || !similarMovies)
+    return <p className="text-white p-8">Loading...</p>;
 
   return (
-    <main className="pb-20 w-full flex flex-col items-start p-container pt-8">
+    <main className="pb-20 w-full flex flex-col items-start pt-8">
       {/* Backdrop */}
-      <div className="w-full relative mb-10 pt-8">
+      <div className="w-full relative mb-10 pt-8  p-container">
         <img
           src={`https://image.tmdb.org/t/p/w1280${movieData?.backdrop_path}`}
           alt={movieData?.title}
@@ -34,24 +59,38 @@ const MoviePage = () => {
       </div>
 
       {/* Main Info Section */}
-      <section className="flex flex-col lg:flex-row w-full gap-10">
+      <section className="flex flex-col lg:flex-row w-full gap-10 p-container">
         {/* Poster */}
-        <img
-          src={`https://image.tmdb.org/t/p/w500${movieData?.poster_path}`}
-          alt={movieData?.title}
-          className="md:w-64 w-48 rounded-lg shadow-lg  mx-auto "
-        />
+        {movieData?.poster_path && (
+          <img
+            src={`https://image.tmdb.org/t/p/w500${movieData?.poster_path}`}
+            alt={movieData?.title}
+            className="md:w-auto h-80 w-48 rounded-lg shadow-lg  mx-auto"
+          />
+        )}
 
         {/* Movie Info */}
         <div className="flex flex-col gap-4">
-          <h1 className="text-4xl font-bold md:text-start text-center">
-            {movieData?.title}
-          </h1>
+          <div className="flex md:flex-row flex-col justify-between gap-4">
+            <h1 className="text-4xl font-bold md:text-start text-center">
+              {movieData?.title}
+            </h1>
+            <Link to={movieData?.homepage} className="pink-btn">
+              See More
+            </Link>
+          </div>
           {movieData?.tagline && (
             <p className="text-lg italic md:text-start text-center text-gray-300">
               {movieData?.tagline}
             </p>
           )}
+          {movieData?.video &&
+            (console.log(movieData?.video),
+            (
+              <p className="text-lg italic md:text-start text-center text-gray-300">
+                {movieData?.video}
+              </p>
+            ))}
 
           <div className="text-sm flex gap-6 text-gray-400">
             <p>🗓️ {movieData?.release_date}</p>
@@ -80,71 +119,53 @@ const MoviePage = () => {
 
           {/* Budget and Revenue */}
           <div className="text-sm flex gap-6 text-gray-400">
-            <p>💰 Budget: ${movieData?.budget.toLocaleString("en-US")}</p>
-            <p>💰 Revenue: ${movieData?.revenue.toLocaleString("en-US")}</p>
+            {movieData?.budget > 0 && (
+              <p>💰 Budget: ${movieData?.budget.toLocaleString("en-US")}</p>
+            )}
+            {movieData?.revenue > 0 && (
+              <p>💰 Revenue: ${movieData?.revenue.toLocaleString("en-US")}</p>
+            )}
           </div>
         </div>
       </section>
 
-      {/* Cast */}
-      {cast?.cast?.length > 0 && (
-        <section className="mt-12 w-full">
-          <h2 className="text-3xl md:text-start text-center font-semibold mb-6">
-            Cast
-          </h2>
-          <div className="flex justify-center flex-wrap md:gap-10 gap-5">
-            {cast?.cast?.map(
-              (person, index) =>
-                index < 8 && (
-                  <div key={person.id} className="flex flex-col items-center ">
-                    <img
-                      src={
-                        person.profile_path
-                          ? `https://image.tmdb.org/t/p/w500${person.profile_path}`
-                          : broken
-                      }
-                      alt={person.name}
-                      className="md:h-40 h-20 rounded-full"
-                    />
-                    <span className="md:text-sm text-[10px] mt-2">
-                      {person.name}
-                    </span>
-                    <p className="text-[10px] text-gray-400 w-[100px]">
-                      {person.character}
-                    </p>
-                  </div>
-                )
-            )}
-          </div>
-        </section>
-      )}
-
       {/* Production Companies */}
-      {movieData?.production_companies.length > 0 && (
-        <section className="mt-12 w-full">
+      <ProductionCompanies
+        production_companies={movieData?.production_companies}
+      />
+
+      {/* Cast */}
+      <Cast cast={cast} />
+
+      {/* Similar Movies */}
+      {similarMovies?.length > 0 && (
+        <section className="mt-12 w-full p-container" key={id}>
           <h2 className="text-3xl md:text-start text-center font-semibold mb-6">
-            Production Companies
+            Similar Movies
           </h2>
-          <div className="flex justify-center flex-wrap gap-6">
-            {movieData?.production_companies.map((company) => (
-              <div
-                key={company.id}
-                className="flex flex-col items-center gap-3"
-              >
-                {company.logo_path && (
-                  <img
-                    src={
-                      company.logo_path
-                        ? `https://image.tmdb.org/t/p/w200${company.logo_path}`
-                        : broken
-                    }
-                    alt={company.name}
-                    className="md:h-16 h-12 object-contain"
-                  />
-                )}
-              </div>
+          <Carousel
+            swipeable={true}
+            draggable={true}
+            responsive={responsive}
+            ssr={true} // means to render carousel on server-side.
+            keyBoardControl={true}
+            transitionDuration={500}
+            containerClass=""
+            removeArrowOnDeviceType={["mobile"]}
+            dotListClass="custom-dot-list-style"
+            itemClass="sm:p-5 p-3"
+          >
+            {similarMovies?.map((movie) => (
+              <PosterCard
+                key={movie.id}
+                id={movie.id}
+                type="movie"
+                image={movie.poster_path}
+                title={movie.title}
+                subtitle={movie.overview}
+              />
             ))}
-          </div>
+          </Carousel>
         </section>
       )}
     </main>

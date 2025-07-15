@@ -1,4 +1,5 @@
 import type {
+  IActorInfo,
   IMovie,
   IMovieCast,
   IMovies,
@@ -104,9 +105,9 @@ export const getTrends = async () => {
   return data;
 };
 
-export const searchMulti = async (query: string, page: number) => {
+export const searchMulti = async (query: string) => {
   const res = await fetch(
-    `${BASE_URL}/search/multi?query=${query}&include_adult=false&language=en-US&page=${page}`,
+    `${BASE_URL}/search/multi?query=${query}&include_adult=false&language=en-US&page=1`,
     {
       headers: {
         accept: "application/json",
@@ -195,5 +196,42 @@ export const getPopularMovies = async (page: number) => {
     }
   );
   const data: INode<IMovies[]> = await res.json();
+  return data;
+};
+export const getSimilarMovies = async (id: number) => {
+  const res = await fetch(
+    `${BASE_URL}/movie/${id}/similar?language=en-US&page=1`,
+    {
+      headers: {
+        accept: "application/json",
+        Authorization: API_KEY,
+      },
+    }
+  );
+  const data: INode<IMovies[]> = await res.json();
+  return data;
+};
+export const getSimilarTVShows = async (id: number) => {
+  const res = await fetch(
+    `${BASE_URL}/tv/${id}/similar?language=en-US&page=1`,
+    {
+      headers: {
+        accept: "application/json",
+        Authorization: API_KEY,
+      },
+    }
+  );
+  const data: INode<ITVShow[]> = await res.json();
+  return data;
+};
+
+export const getActor = async (id: number) => {
+  const res = await fetch(`${BASE_URL}/person/${id}?language=en-US`, {
+    headers: {
+      accept: "application/json",
+      Authorization: API_KEY,
+    },
+  });
+  const data: IActorInfo = await res.json();
   return data;
 };

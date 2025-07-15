@@ -20,21 +20,22 @@ const PosterCard: React.FC<PosterCardProps> = ({
   return (
     <Link
       to={type === "movie" ? `/movie/${id}` : `/tv/${id}`}
-      className="bg-[#40292B] rounded-xl overflow-hidden shadow-lg flex flex-col items-center pb-2 cursor-pointer"
+      onClick={() => {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }}
+      className="bg-[#40292B] rounded-xl overflow-hidden shadow-lg h-full flex flex-col items-center pb-2 cursor-pointer"
     >
       <img
         src={image ? `https://image.tmdb.org/t/p/w500${image}` : broken}
         alt={title}
         className="w-full h-full object-cover mb-3 hover:scale-105 transition-transform duration-200"
       />
-      <h3 className="text-lg font-semibold mb-1 text-white text-center truncate w-full px-1">
+      <h3 className="text-lg font-semibold mb-1 text-white text-center truncate w-full px-3">
         {title}
       </h3>
-      {subtitle && (
-        <p className="text-sm text-[#E8B5B8] text-center truncate w-full px-1">
-          {subtitle}
-        </p>
-      )}
+      <p className="text-sm text-[#E8B5B8] h-6 text-center truncate w-full px-3">
+        {subtitle}
+      </p>
     </Link>
   );
 };

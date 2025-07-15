@@ -1,14 +1,18 @@
 import { useEffect, useState } from "react";
 import { getTrends } from "../services/tmdb";
 import type { IMovies } from "../types/movies";
-import { Carousel } from "react-responsive-carousel";
-import "react-responsive-carousel/lib/styles/carousel.min.css";
+import Carousel from "react-multi-carousel";
+import "react-multi-carousel/lib/styles.css";
 import { Link } from "react-router-dom";
-
+const responsive = {
+  desktop: {
+    breakpoint: { max: 300000, min: 0 },
+    items: 1,
+    slidesToSlide: 1,
+  },
+};
 const Trends = () => {
   const [trends, setTrends] = useState<IMovies[]>([]);
-  const [currentIndex, setCurrentIndex] = useState<number>(0);
-
   useEffect(() => {
     const fetchTrends = async () => {
       const res = await getTrends();
@@ -18,19 +22,18 @@ const Trends = () => {
   }, []);
 
   return (
-    <section className="mx-auto pt-10">
+    <section className="mx-auto py-10">
       <Carousel
-        showThumbs={false}
-        showStatus={false}
-        showIndicators={false}
-        autoPlay
-        infiniteLoop
-        interval={5000}
-        showArrows={true}
-        selectedItem={currentIndex}
-        onChange={setCurrentIndex}
-        stopOnHover={false}
         swipeable={true}
+        draggable={true}
+        autoPlay
+        infinite
+        responsive={responsive}
+        ssr={true}
+        keyBoardControl={true}
+        transitionDuration={500}
+        arrows={false}
+        removeArrowOnDeviceType={["mobile"]}
       >
         {trends.map((movie) => (
           <Link
@@ -54,13 +57,6 @@ const Trends = () => {
           </Link>
         ))}
       </Carousel>
-      <div className="w-full flex justify-end items-start py-3 bg-transparent text-white text-xs sm:text-sm">
-        {trends.length > 0 && (
-          <span>
-            {currentIndex + 1} / {trends.length}
-          </span>
-        )}
-      </div>
     </section>
   );
 };

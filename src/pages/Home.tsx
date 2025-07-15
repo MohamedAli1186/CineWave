@@ -10,8 +10,8 @@ const Home = () => {
       <Trends />
       <HomeMarketing />
       <SearchMulti />
-      <PopularTvSeries />
       <PopularMovies />
+      <PopularTvSeries />
     </main>
   );
 };

@@ -1,13 +1,33 @@
-import { useParams } from "react-router-dom";
-import { getTvShow, getTVShowCast } from "../services/tmdb";
+import { Link, useParams } from "react-router-dom";
+import { getSimilarTVShows, getTvShow, getTVShowCast } from "../services/tmdb";
 import { useEffect, useState } from "react";
-import type { IMovieCast, ITVShows } from "../types/movies";
-import broken from "../../public/broke.webp";
-
+import type { IMovieCast, ITVShow, ITVShows } from "../types/movies";
+import Carousel from "react-multi-carousel";
+import PosterCard from "../components/PosterCard";
+import Cast from "../components/Cast";
+import ProductionCompanies from "../components/ProductionCompanies";
+const responsive = {
+  desktop: {
+    breakpoint: { max: 3000, min: 1024 },
+    items: 4,
+    slidesToSlide: 1, // optional, default to 1.
+  },
+  tablet: {
+    breakpoint: { max: 1024, min: 464 },
+    items: 3,
+    slidesToSlide: 1, // optional, default to 1.
+  },
+  mobile: {
+    breakpoint: { max: 464, min: 0 },
+    items: 2,
+    slidesToSlide: 1, // optional, default to 1.
+  },
+};
 const TVPage = () => {
   const { id } = useParams();
   const [tvShowData, setTvShowData] = useState<ITVShows>();
   const [cast, setCast] = useState<IMovieCast>();
+  const [similar, setSimilar] = useState<ITVShow[]>();
 
   useEffect(() => {
     const fetchMovie = async () => {
@@ -15,16 +35,19 @@ const TVPage = () => {
       setTvShowData(res);
       const castRes = await getTVShowCast(+id!);
       setCast(castRes);
+      const similarRes = await getSimilarTVShows(+id!);
+      setSimilar(similarRes.results);
     };
     fetchMovie();
   }, [id]);
 
-  if (!tvShowData || !cast) return <p className="text-white p-8">Loading...</p>;
+  if (!tvShowData || !cast || !similar)
+    return <p className="text-white p-8">Loading...</p>;
 
   return (
-    <main className="pb-20 w-full flex flex-col items-start p-container pt-8">
+    <main className="pb-20 w-full flex flex-col items-start pt-16">
       {/* Backdrop */}
-      <div className="w-full relative mb-10">
+      <div className="w-full relative mb-10 p-container">
         <img
           src={`https://image.tmdb.org/t/p/w1280${tvShowData?.backdrop_path}`}
           alt={tvShowData?.name}
@@ -34,34 +57,50 @@ const TVPage = () => {
       </div>
 
       {/* Main Info Section */}
-      <section className="flex flex-col lg:flex-row w-full gap-10">
+      <section className="flex flex-col lg:flex-row w-full gap-10 p-container">
         {/* Poster */}
-        <img
-          src={`https://image.tmdb.org/t/p/w500${tvShowData?.poster_path}`}
-          alt={tvShowData?.name}
-          className="md:w-64 w-48 rounded-lg shadow-lg  mx-auto "
-        />
+        {tvShowData?.poster_path && (
+          <img
+            src={`https://image.tmdb.org/t/p/w500${tvShowData?.poster_path}`}
+            alt={tvShowData?.name}
+            className="md:w-auto h-80 w-48 rounded-lg shadow-lg mx-auto"
+          />
+        )}
 
-        {/* Movie Info */}
+        {/* series Info */}
         <div className="flex flex-col gap-4">
-          <h1 className="text-4xl font-bold md:text-start text-center">
-            {tvShowData?.name}
-          </h1>
+          <div className="flex md:flex-row flex-col justify-between gap-4">
+            <h1 className="text-4xl font-bold md:text-start text-center">
+              {tvShowData?.name}
+            </h1>
+            <Link
+              to={tvShowData?.homepage}
+              className="pink-btn text-nowrap h-fit"
+            >
+              See More
+            </Link>
+          </div>
           {tvShowData?.tagline && (
             <p className="text-lg italic md:text-start text-center text-gray-300">
               {tvShowData?.tagline}
             </p>
           )}
 
-          <div className="text-sm flex justify-center md:justify-start gap-6 flex-wrap text-gray-400 text-nowrap">
+          <div className="text-sm flex justify-center items-center md:justify-start gap-6 flex-wrap text-gray-400 text-nowrap">
             <p>🗓️ {tvShowData?.first_air_date}</p>
-            <p>⏱️ {tvShowData?.episode_run_time} min</p>
+            {tvShowData?.episode_run_time.length > 0 && (
+              <p>⏱️ {tvShowData?.episode_run_time} min</p>
+            )}{" "}
             <p>
               ⭐ {tvShowData?.vote_average} ({tvShowData?.vote_count} votes)
             </p>
             <p
               className={`text-white px-2 py-1 rounded-full ${
-                tvShowData?.status === "Ended" ? "bg-red-600" : "bg-green-600"
+                tvShowData?.status === "Ended"
+                  ? "bg-red-600"
+                  : tvShowData?.status === "Canceled"
+                  ? "bg-yellow-600"
+                  : "bg-green-600"
               }`}
             >
               {tvShowData?.status}
@@ -69,7 +108,7 @@ const TVPage = () => {
           </div>
 
           {/* Genres */}
-          <div className="flex flex-wrap gap-2 justify-center md:justify-start mt-2">
+          <div className="flex flex-wrap  gap-2 justify-center md:justify-start mt-2">
             {tvShowData?.genres.map((genre) => (
               <span
                 key={genre.id}
@@ -85,85 +124,70 @@ const TVPage = () => {
             {tvShowData?.overview}
           </p>
 
-          {/* Budget and Revenue */}
-          <div className="text-sm text-center md:text-start text-gray-400">
-            {tvShowData?.number_of_episodes && (
-              <p>
-                total number of episodes is {tvShowData?.number_of_episodes}
-              </p>
-            )}
-            {tvShowData?.number_of_seasons && (
-              <p>total number of seasons is {tvShowData?.number_of_seasons}</p>
-            )}
-            <p>
-              last time aired was {tvShowData?.last_air_date} in episode{" "}
-              {tvShowData?.last_episode_to_air.name}
-            </p>
-            {tvShowData?.next_episode_to_air && (
-              <p>next episode airs on {tvShowData?.next_episode_to_air}</p>
-            )}
+          {/* series info */}
+          <div className="flex justify-between items-center">
+            <div className="text-sm text-center md:text-start text-gray-400">
+              {tvShowData?.number_of_episodes && (
+                <p>
+                  total number of episodes is {tvShowData?.number_of_episodes}
+                </p>
+              )}
+              {tvShowData?.number_of_seasons && (
+                <p>
+                  total number of seasons is {tvShowData?.number_of_seasons}
+                </p>
+              )}
+              {tvShowData?.last_air_date &&
+                tvShowData?.last_episode_to_air.name && (
+                  <p>
+                    last time aired was {tvShowData?.last_air_date} in episode{" "}
+                    {tvShowData?.last_episode_to_air.name}
+                  </p>
+                )}
+              {tvShowData?.next_episode_to_air && (
+                <p>
+                  next episode airs on{" "}
+                  {tvShowData?.next_episode_to_air.air_date}
+                </p>
+              )}
+            </div>
           </div>
         </div>
       </section>
-
-      {/* Cast */}
-      {cast?.cast?.length > 0 && (
-        <section className="mt-12 w-full">
-          <h2 className="text-3xl md:text-start text-center font-semibold mb-6">
-            Cast
-          </h2>
-          <div className="flex justify-center flex-wrap md:gap-10 gap-5">
-            {cast?.cast?.map(
-              (person, index) =>
-                index < 8 && (
-                  <div key={person.id} className="flex flex-col items-center ">
-                    <img
-                      src={
-                        person.profile_path
-                          ? `https://image.tmdb.org/t/p/w500${person.profile_path}`
-                          : broken
-                      }
-                      alt={person.name}
-                      className="md:h-40 h-20 rounded-full"
-                    />
-                    <span className="md:text-sm text-[10px] mt-2">
-                      {person.name}
-                    </span>
-                    <p className="text-[10px] text-gray-400 w-[100px]">
-                      {person.character}
-                    </p>
-                  </div>
-                )
-            )}
-          </div>
-        </section>
-      )}
       {/* Production Companies */}
-      {tvShowData?.production_companies.length > 0 && (
-        <section className="mt-12 w-full">
+      <ProductionCompanies
+        production_companies={tvShowData.production_companies}
+      />
+      {/* Cast */}
+      <Cast cast={cast} />
+
+      {/* Similar Movies */}
+      {similar?.length > 0 && (
+        <section className="mt-12 w-full p-container">
           <h2 className="text-3xl md:text-start text-center font-semibold mb-6">
-            Production Companies
+            Similar Movies
           </h2>
-          <div className="flex justify-center flex-wrap gap-6">
-            {tvShowData?.production_companies.map((company) => (
-              <div
-                key={company.id}
-                className="flex flex-col items-center gap-3"
-              >
-                {company.logo_path && (
-                  <img
-                    src={
-                      company.logo_path
-                        ? `https://image.tmdb.org/t/p/w200${company.logo_path}`
-                        : broken
-                    }
-                    alt={company.name}
-                    className="md:h-16 h-12 object-contain"
-                  />
-                )}
-              </div>
+          <Carousel
+            swipeable={true}
+            draggable={true}
+            responsive={responsive}
+            ssr={true} // means to render carousel on server-side.
+            keyBoardControl={true}
+            transitionDuration={500}
+            removeArrowOnDeviceType={["mobile"]}
+            itemClass="p-5"
+          >
+            {similar?.map((tvShow) => (
+              <PosterCard
+                key={tvShow.id}
+                id={tvShow.id}
+                type="tv"
+                image={tvShow.poster_path}
+                title={tvShow.name}
+                subtitle={tvShow.overview}
+              />
             ))}
-          </div>
+          </Carousel>
         </section>
       )}
     </main>
