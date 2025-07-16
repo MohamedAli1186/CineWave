@@ -7,22 +7,23 @@ import Carousel from "react-multi-carousel";
 import "react-multi-carousel/lib/styles.css";
 import Cast from "../components/Cast";
 import ProductionCompanies from "../components/ProductionCompanies";
+import MoviesImages from "../components/MoviesImages";
 
 const responsive = {
   desktop: {
     breakpoint: { max: 3000, min: 1024 },
     items: 4,
-    slidesToSlide: 1, // optional, default to 1.
+    slidesToSlide: 1,
   },
   tablet: {
     breakpoint: { max: 1024, min: 464 },
     items: 3,
-    slidesToSlide: 1, // optional, default to 1.
+    slidesToSlide: 1,
   },
   mobile: {
     breakpoint: { max: 464, min: 0 },
     items: 2,
-    slidesToSlide: 1, // optional, default to 1.
+    slidesToSlide: 1,
   },
 };
 const MoviePage = () => {
@@ -75,7 +76,7 @@ const MoviePage = () => {
             <h1 className="text-4xl font-bold md:text-start text-center">
               {movieData?.title}
             </h1>
-            <Link to={movieData?.homepage} className="pink-btn">
+            <Link to={movieData?.homepage} className="pink-btn" target="_blank">
               See More
             </Link>
           </div>
@@ -128,6 +129,7 @@ const MoviePage = () => {
           </div>
         </div>
       </section>
+      <MoviesImages id={+id!} />
 
       {/* Production Companies */}
       <ProductionCompanies

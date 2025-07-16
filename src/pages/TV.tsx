@@ -6,6 +6,7 @@ import Carousel from "react-multi-carousel";
 import PosterCard from "../components/PosterCard";
 import Cast from "../components/Cast";
 import ProductionCompanies from "../components/ProductionCompanies";
+import TVImages from "../components/TVImages";
 const responsive = {
   desktop: {
     breakpoint: { max: 3000, min: 1024 },
@@ -76,6 +77,7 @@ const TVPage = () => {
             <Link
               to={tvShowData?.homepage}
               className="pink-btn text-nowrap h-fit"
+              target="_blank"
             >
               See More
             </Link>
@@ -154,10 +156,14 @@ const TVPage = () => {
           </div>
         </div>
       </section>
+      {/* Images */}
+      <TVImages id={+id!} />
+
       {/* Production Companies */}
       <ProductionCompanies
         production_companies={tvShowData.production_companies}
       />
+
       {/* Cast */}
       <Cast cast={cast} />
 

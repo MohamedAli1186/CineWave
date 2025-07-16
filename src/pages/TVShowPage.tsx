@@ -14,6 +14,10 @@ const TVShowPage = () => {
   const direction = useRef(null);
 
   useEffect(() => {
+    setPageNo(1);
+  }, [genre]);
+
+  useEffect(() => {
     const fetchTVShows = async () => {
       const res = await getTVShows(pageNo, genre);
       setTvShows({

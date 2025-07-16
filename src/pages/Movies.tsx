@@ -15,6 +15,10 @@ const Movies = () => {
   const [movies, setMovies] = useState<INode<IMovies[]>>();
 
   useEffect(() => {
+    setPageNo(1);
+  }, [genre, year]);
+
+  useEffect(() => {
     const fetchMovies = async () => {
       const res = await getMovies(pageNo, genre, year);
       setMovies({

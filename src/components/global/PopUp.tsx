@@ -29,7 +29,7 @@ const Popup: React.FC<IProps> = ({ onClose, children, className }) => {
         <button
           title="Close"
           type="button"
-          className="fz-40 absolute top-7 right-6 h-auto w-[14px]"
+          className="fz-40 absolute top-7 right-6 h-auto w-[14px] cursor-pointer"
           onClick={onClose}
           data-cy="popup-close-button"
         >

@@ -1,5 +1,7 @@
+import type { ITrendActor } from "../types/actor";
 import type {
   IActorInfo,
+  IImages,
   IMovie,
   IMovieCast,
   IMovies,
@@ -233,5 +235,37 @@ export const getActor = async (id: number) => {
     },
   });
   const data: IActorInfo = await res.json();
+  return data;
+};
+
+export const getTrendingActors = async () => {
+  const res = await fetch(`${BASE_URL}/trending/person/week?language=en-US`, {
+    headers: {
+      accept: "application/json",
+      Authorization: API_KEY,
+    },
+  });
+  const data: INode<ITrendActor[]> = await res.json();
+  return data;
+};
+
+export const getMoviesImages = async (id: number) => {
+  const res = await fetch(`${BASE_URL}/movie/${id}/images`, {
+    headers: {
+      accept: "application/json",
+      Authorization: API_KEY,
+    },
+  });
+  const data: IImages = await res.json();
+  return data;
+};
+export const getTVImages = async (id: number) => {
+  const res = await fetch(`${BASE_URL}/tv/${id}/images`, {
+    headers: {
+      accept: "application/json",
+      Authorization: API_KEY,
+    },
+  });
+  const data: IImages = await res.json();
   return data;
 };

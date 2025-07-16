@@ -273,3 +273,20 @@ export interface ITVShows {
   vote_average: number;
   vote_count: number;
 }
+
+export interface IImagesData {
+  aspect_ratio: number;
+  height: number;
+  iso_639_1: string | null;
+  file_path: string;
+  vote_average: number;
+  vote_count: number;
+  width: number;
+}
+
+export interface IImages {
+  backdrops: IImagesData[];
+  id: number;
+  logos: IImagesData[];
+  posters: IImagesData[];
+}

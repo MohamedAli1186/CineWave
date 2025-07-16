@@ -3,6 +3,7 @@ import Trends from "../components/Trends";
 import PopularTvSeries from "../components/PopularTvSeries";
 import PopularMovies from "../components/PopularMovies";
 import HomeMarketing from "../components/HomeMarketing ";
+import TrendingActor from "../components/TrendingActor";
 
 const Home = () => {
   return (
@@ -12,6 +13,7 @@ const Home = () => {
       <SearchMulti />
       <PopularMovies />
       <PopularTvSeries />
+      <TrendingActor />
     </main>
   );
 };
