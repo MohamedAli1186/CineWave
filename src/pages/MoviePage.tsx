@@ -1,5 +1,10 @@
 import { Link, useParams } from "react-router-dom";
-import { getMovie, getMovieCast, getSimilarMovies } from "../services/tmdb";
+import {
+  addToWatchlist,
+  getMovie,
+  getMovieCast,
+  getSimilarMovies,
+} from "../services/tmdb";
 import { useEffect, useState } from "react";
 import type { IMovie, IMovieCast, IMovies } from "../types/movies";
 import PosterCard from "../components/PosterCard";
@@ -8,6 +13,7 @@ import "react-multi-carousel/lib/styles.css";
 import Cast from "../components/Cast";
 import ProductionCompanies from "../components/ProductionCompanies";
 import MoviesImages from "../components/MoviesImages";
+import { showToast } from "../components/global/Toast";
 
 const responsive = {
   desktop: {
@@ -31,6 +37,29 @@ const MoviePage = () => {
   const [movieData, setMovieData] = useState<IMovie>();
   const [cast, setCast] = useState<IMovieCast>();
   const [similarMovies, setSimilarMovies] = useState<IMovies[]>();
+
+  const sessionId = localStorage.getItem("session_id");
+
+  const addToWatchlists = async (media_type: string, movieId: number) => {
+    if (!sessionId) {
+      console.log("No session ID found");
+      return;
+    }
+    try {
+      const res = await addToWatchlist(sessionId, media_type, movieId);
+      if (res.success) {
+        showToast({ message: "Added to Watchlist!" });
+      } else {
+        showToast({ message: "Something went wrong.", type: "error" });
+      }
+    } catch (err) {
+      showToast({
+        message: "Failed to add movie to watchlist.",
+        type: "error",
+      });
+      console.error(err);
+    }
+  };
 
   useEffect(() => {
     const fetchMovie = async () => {
@@ -76,9 +105,20 @@ const MoviePage = () => {
             <h1 className="text-4xl font-bold md:text-start text-center">
               {movieData?.title}
             </h1>
-            <Link to={movieData?.homepage} className="pink-btn" target="_blank">
-              See More
-            </Link>
+            <div className="flex gap-4">
+              <Link to={movieData?.homepage} className="btn" target="_blank">
+                See More
+              </Link>
+              <button
+                type="button"
+                className="pink-btn"
+                onClick={() => {
+                  addToWatchlists("movie", movieData.id);
+                }}
+              >
+                Add to Watchlist
+              </button>
+            </div>
           </div>
           {movieData?.tagline && (
             <p className="text-lg italic md:text-start text-center text-gray-300">

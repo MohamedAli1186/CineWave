@@ -29,7 +29,7 @@ const SearchMulti = () => {
       const res = await searchMulti(search);
       setResults(res);
       setShowResults(true);
-    }, 500);
+    }, 400);
 
     return () => clearTimeout(timer);
     // eslint-disable-next-line react-hooks/exhaustive-deps
