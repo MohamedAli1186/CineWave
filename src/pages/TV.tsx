@@ -9,7 +9,7 @@ import {
 import { useEffect, useState } from "react";
 import type { IMovieCast, ITVShow, ITVShows, IVideo } from "../types/movies";
 import Cast from "../components/movieTvPageComponents/Cast";
-import ProductionCompanies from "../components/ProductionCompanies";
+import ProductionCompanies from "../components/movieTvPageComponents/ProductionCompanies";
 import TVImages from "../components/TVImages";
 import { getSessionId } from "../utils/auth";
 import { showToast } from "../components/global/Toast";

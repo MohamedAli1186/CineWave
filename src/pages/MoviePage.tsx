@@ -8,7 +8,7 @@ import {
 import { useEffect, useState } from "react";
 import type { IMovie, IMovieCast, IMovies, IVideo } from "../types/movies";
 import Cast from "../components/movieTvPageComponents/Cast";
-import ProductionCompanies from "../components/ProductionCompanies";
+import ProductionCompanies from "../components/movieTvPageComponents/ProductionCompanies";
 import MoviesImages from "../components/MoviesImages";
 import BtnsResources from "../components/movieTvPageComponents/BtnsResources";
 import SimilarMovies from "../components/movieTvPageComponents/SimilarMovies";

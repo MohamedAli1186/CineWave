@@ -30,7 +30,7 @@ const BtnsResources = ({
     }
   };
   return (
-    <div className="flex gap-4">
+    <div className="flex gap-4 mx-auto">
       <Link to={homePage} className="btn" target="_blank">
         See More
       </Link>
