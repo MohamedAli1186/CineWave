@@ -39,12 +39,12 @@ const Trends = () => {
           <Link
             to={`/movie/${movie.id}`}
             key={movie.id}
-            className="md:max-h-[630px] max-h-[300px] flex items-end justify-center"
+            className="md:max-h-[630px] max-h-[500px] flex items-end justify-center"
           >
             <img
               src={`https://image.tmdb.org/t/p/w1280${movie.backdrop_path}`}
               alt={movie.title}
-              className="inset-0 h-fit w-auto rounded-2xl relative opacity-75 object-cover"
+              className="inset-0 h-fit w-auto rounded-2xl relative opacity-75 object-top"
             />
             <div className="absolute bottom-0 z-10 md:p-8 p-4 w-full text-start">
               <h2 className="text-lg md:text-2xl lg:text-6xl font-bold mb-2">
