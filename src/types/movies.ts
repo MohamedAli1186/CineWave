@@ -17,6 +17,7 @@ export interface IMovies {
   poster_path: string;
   release_date: string;
   title: string;
+  name: string;
   video: boolean;
   vote_average: number;
   vote_count: number;
@@ -35,6 +36,7 @@ export interface ITVShow {
   poster_path: string;
   first_air_date: string;
   name: string;
+  title: string;
   vote_average: number;
   vote_count: number;
 }
@@ -290,3 +292,17 @@ export interface IImages {
   logos: IImagesData[];
   posters: IImagesData[];
 }
+
+export interface IVideo {
+  iso_639_1: string;
+  iso_3166_1: string;
+  name: string;
+  key: string;
+  site: string;
+  size: number;
+  type: string;
+  official: boolean;
+  published_at: string;
+  id: string;
+}
+[];

@@ -1,7 +1,7 @@
 import { useState, type FC } from "react";
-import type { IMovieCast, IActor } from "../types/movies";
-import ActorPopup from "./ActorPopup";
-import user from "../../public/user.png";
+import type { IMovieCast, IActor } from "../../types/movies";
+import ActorPopup from "../ActorPopup";
+import user from "../../../public/user.png";
 
 interface CastProps {
   cast: IMovieCast;
@@ -13,9 +13,7 @@ const Cast: FC<CastProps> = ({ cast }) => {
     <>
       {cast?.cast?.length > 0 && (
         <section className="my-12 w-full p-container">
-          <h2 className="text-3xl md:text-start text-center font-semibold mb-6">
-            Cast
-          </h2>
+          <h2 className="small-title">Cast</h2>
           <div className="flex justify-center flex-wrap md:gap-10 gap-5 w-full">
             {cast?.cast?.map(
               (person, index) =>

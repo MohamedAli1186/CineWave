@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from "react";
-import { searchMulti } from "../services/tmdb";
-import type { INode, ISearch } from "../types/movies";
+import { searchMulti } from "../../services/tmdb";
+import type { INode, ISearch } from "../../types/movies";
 import { Link } from "react-router-dom";
-import ActorPopup from "./ActorPopup";
+import ActorPopup from "../../components/ActorPopup";
 
 const SearchMulti = () => {
   const inputRef = useRef<HTMLInputElement>(null);

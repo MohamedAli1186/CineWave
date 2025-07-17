@@ -1,35 +1,48 @@
 import { Link, useParams } from "react-router-dom";
-import { getSimilarTVShows, getTvShow, getTVShowCast } from "../services/tmdb";
+import {
+  addToWatchlist,
+  getSimilarTVShows,
+  getTvShow,
+  getTVShowCast,
+  getTVShowVideos,
+} from "../services/tmdb";
 import { useEffect, useState } from "react";
-import type { IMovieCast, ITVShow, ITVShows } from "../types/movies";
-import Carousel from "react-multi-carousel";
-import PosterCard from "../components/PosterCard";
-import Cast from "../components/Cast";
+import type { IMovieCast, ITVShow, ITVShows, IVideo } from "../types/movies";
+import Cast from "../components/movieTvPageComponents/Cast";
 import ProductionCompanies from "../components/ProductionCompanies";
 import TVImages from "../components/TVImages";
-const responsive = {
-  desktop: {
-    breakpoint: { max: 3000, min: 1024 },
-    items: 4,
-    slidesToSlide: 1, // optional, default to 1.
-  },
-  tablet: {
-    breakpoint: { max: 1024, min: 464 },
-    items: 3,
-    slidesToSlide: 1, // optional, default to 1.
-  },
-  mobile: {
-    breakpoint: { max: 464, min: 0 },
-    items: 2,
-    slidesToSlide: 1, // optional, default to 1.
-  },
-};
+import { getSessionId } from "../utils/auth";
+import { showToast } from "../components/global/Toast";
+import SimilarMovies from "../components/movieTvPageComponents/SimilarMovies";
+import Trailers from "../components/movieTvPageComponents/Trailers";
+
 const TVPage = () => {
   const { id } = useParams();
   const [tvShowData, setTvShowData] = useState<ITVShows>();
   const [cast, setCast] = useState<IMovieCast>();
   const [similar, setSimilar] = useState<ITVShow[]>();
-
+  const [trailer, setTrailer] = useState<IVideo[]>();
+  const sessionId = getSessionId();
+  const addToWatchlists = async (media_type: string, movieId: number) => {
+    if (!sessionId) {
+      console.log("No session ID found");
+      return;
+    }
+    try {
+      const res = await addToWatchlist(sessionId, media_type, movieId);
+      if (res.success) {
+        showToast({ message: "Added to Watchlist!" });
+      } else {
+        showToast({ message: "Something went wrong.", type: "error" });
+      }
+    } catch (err) {
+      showToast({
+        message: "Failed to add movie to watchlist.",
+        type: "error",
+      });
+      console.error(err);
+    }
+  };
   useEffect(() => {
     const fetchMovie = async () => {
       const res = await getTvShow(+id!);
@@ -38,6 +51,8 @@ const TVPage = () => {
       setCast(castRes);
       const similarRes = await getSimilarTVShows(+id!);
       setSimilar(similarRes.results);
+      const trailerRes = await getTVShowVideos(+id!);
+      setTrailer(trailerRes.results);
     };
     fetchMovie();
   }, [id]);
@@ -74,13 +89,23 @@ const TVPage = () => {
             <h1 className="text-4xl font-bold md:text-start text-center">
               {tvShowData?.name}
             </h1>
-            <Link
-              to={tvShowData?.homepage}
-              className="pink-btn text-nowrap h-fit"
-              target="_blank"
-            >
-              See More
-            </Link>
+            <div className="flex gap-4">
+              <Link to={tvShowData?.homepage} className="btn" target="_blank">
+                See More
+              </Link>
+              {sessionId && (
+                <button
+                  type="button"
+                  className="pink-btn"
+                  onClick={() => {
+                    addToWatchlists("tv", tvShowData?.id);
+                  }}
+                  disabled={!sessionId}
+                >
+                  Add to Watchlist
+                </button>
+              )}
+            </div>
           </div>
           {tvShowData?.tagline && (
             <p className="text-lg italic md:text-start text-center text-gray-300">
@@ -167,35 +192,11 @@ const TVPage = () => {
       {/* Cast */}
       <Cast cast={cast} />
 
+      {/* Trailers */}
+      {trailer && <Trailers trailer={trailer} />}
+
       {/* Similar Movies */}
-      {similar?.length > 0 && (
-        <section className="mt-12 w-full p-container">
-          <h2 className="text-3xl md:text-start text-center font-semibold mb-6">
-            Similar Movies
-          </h2>
-          <Carousel
-            swipeable={true}
-            draggable={true}
-            responsive={responsive}
-            ssr={true} // means to render carousel on server-side.
-            keyBoardControl={true}
-            transitionDuration={500}
-            removeArrowOnDeviceType={["mobile"]}
-            itemClass="p-5"
-          >
-            {similar?.map((tvShow) => (
-              <PosterCard
-                key={tvShow.id}
-                id={tvShow.id}
-                type="tv"
-                image={tvShow.poster_path}
-                title={tvShow.name}
-                subtitle={tvShow.overview}
-              />
-            ))}
-          </Carousel>
-        </section>
-      )}
+      <SimilarMovies similar={similar} />
     </main>
   );
 };

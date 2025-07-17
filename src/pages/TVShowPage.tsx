@@ -2,9 +2,9 @@ import { useEffect, useRef, useState } from "react";
 import PosterCard from "../components/PosterCard";
 import { getTVShows } from "../services/tmdb";
 import type { ITVShow, INode } from "../types/movies";
-import SearchMulti from "../components/SearchMulti";
+import SearchMulti from "../components/global/SearchMulti";
 import ShinyText from "../blocks/TextAnimations/ShinyText/ShinyText";
-import Pagination from "../components/Pagination";
+import Pagination from "../components/global/Pagination";
 import TVFiltering from "../components/TVFiltering";
 
 const TVShowPage = () => {

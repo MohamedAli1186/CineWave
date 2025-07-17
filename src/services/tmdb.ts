@@ -10,6 +10,7 @@ import type {
   ITVSeries,
   ITVShow,
   ITVShows,
+  IVideo,
 } from "../types/movies";
 import type { ISession, IToken } from "../types/user";
 import type { IAddWatchlist } from "../types/watchlist";
@@ -322,5 +323,27 @@ export const getAllTrends = async () => {
     },
   });
   const data: INode<ISearch[]> = await res.json();
+  return data;
+};
+
+export const getMovieVideos = async (id: number) => {
+  const res = await fetch(`${BASE_URL}/movie/${id}/videos?language=en-US`, {
+    headers: {
+      accept: "application/json",
+      Authorization: API_KEY,
+    },
+  });
+  const data: { id: number; results: IVideo[] } = await res.json();
+  return data;
+};
+
+export const getTVShowVideos = async (id: number) => {
+  const res = await fetch(`${BASE_URL}/tv/${id}/videos?language=en-US`, {
+    headers: {
+      accept: "application/json",
+      Authorization: API_KEY,
+    },
+  });
+  const data: { id: number; results: IVideo[] } = await res.json();
   return data;
 };

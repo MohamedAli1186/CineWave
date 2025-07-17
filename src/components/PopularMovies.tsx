@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import Pagination from "./Pagination";
+import Pagination from "./global/Pagination";
 import PosterCard from "./PosterCard";
 import type { INode, IMovies } from "../types/movies";
 import { getPopularMovies } from "../services/tmdb";

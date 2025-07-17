@@ -2,8 +2,8 @@ import { useEffect, useRef, useState } from "react";
 import PosterCard from "../components/PosterCard";
 import { getMovies } from "../services/tmdb";
 import type { IMovies, INode } from "../types/movies";
-import SearchMulti from "../components/SearchMulti";
-import Pagination from "../components/Pagination";
+import SearchMulti from "../components/global/SearchMulti";
+import Pagination from "../components/global/Pagination";
 import ShinyText from "../blocks/TextAnimations/ShinyText/ShinyText";
 import MoviesFiltering from "../components/MoviesFiltering";
 

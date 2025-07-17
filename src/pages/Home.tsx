@@ -1,4 +1,4 @@
-import SearchMulti from "../components/SearchMulti";
+import SearchMulti from "../components/global/SearchMulti";
 import Trends from "../components/Trends";
 import PopularTvSeries from "../components/PopularTvSeries";
 import PopularMovies from "../components/PopularMovies";

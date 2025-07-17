@@ -11,28 +11,13 @@ import { createSessionAuth } from "../utils/auth";
 import Carousel from "react-multi-carousel";
 import ShinyText from "../blocks/TextAnimations/ShinyText/ShinyText";
 import WishlistCard from "../components/WishlistCard";
-import Pagination from "../components/Pagination";
+import Pagination from "../components/global/Pagination";
 import { showToast } from "../components/global/Toast";
+import { responsive } from "../utils/cursorResponsive";
+import { getSessionId } from "../utils/auth";
 
-const responsive = {
-  desktop: {
-    breakpoint: { max: 3000, min: 1024 },
-    items: 4,
-    slidesToSlide: 1,
-  },
-  tablet: {
-    breakpoint: { max: 1024, min: 464 },
-    items: 3,
-    slidesToSlide: 1,
-  },
-  mobile: {
-    breakpoint: { max: 464, min: 0 },
-    items: 2,
-    slidesToSlide: 1,
-  },
-};
 const Watchlist = () => {
-  const sessionId = localStorage.getItem("session_id");
+  const sessionId = getSessionId();
   const movieDirection = useRef(null);
   const tvShowDirection = useRef(null);
   const [watchlistMovies, setWatchlistMovies] = useState<INode<IMovies[]>>();
@@ -41,6 +26,7 @@ const Watchlist = () => {
   const [tvShowsPage, setTvShowsPage] = useState(1);
   const [featured, setFeatured] = useState<ISearch[]>([]);
   const requestToken = localStorage.getItem("request_token");
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
   // Fetch featured movies regardless of session
   useEffect(() => {
     const fetchFeatured = async () => {
@@ -49,6 +35,16 @@ const Watchlist = () => {
     };
     fetchFeatured();
   }, []);
+
+  //rerender if session deleted
+  useEffect(() => {
+    const checkSessionId = () => {
+      if (!sessionId) {
+        setIsLoggedIn(false);
+      }
+    };
+    checkSessionId();
+  }, [sessionId]);
 
   // Fetch user watchlist if session exists
   useEffect(() => {
@@ -76,11 +72,11 @@ const Watchlist = () => {
   const fetchSession = async () => {
     const res = await createToken();
     if (res.success) {
-      showToast({ message: "Added to Watchlist!" });
+      showToast({ message: "Signing up..." });
     } else {
       showToast({ message: "Something went wrong.", type: "error" });
     }
-    window.location.href = `https://www.themoviedb.org/authenticate/${res.request_token}?redirect_to=http://localhost:5173/watchlist`;
+    window.location.href = `https://www.themoviedb.org/authenticate/${res.request_token}?redirect_to=http://localhost:5173`;
   };
 
   return (
@@ -120,7 +116,7 @@ const Watchlist = () => {
       <section className="mt-12 pb-20">
         {!sessionId ? (
           <div className="text-center py-10 bg-[#40292B] rounded-xl">
-            <p className="text-3xl mb-4">
+            <p className="text-3xl mb-4 px-2">
               Want to save your favorite movies and shows? <br />
               <span className="text-white text-xl">
                 Start exploring with your own space
@@ -135,12 +131,13 @@ const Watchlist = () => {
                 Start Now
               </button>
             )}
-            {requestToken && (
+            {requestToken && !sessionId && (
               <button
                 type="button"
                 className="pink-btn transition hover:scale-105"
                 onClick={async () => {
                   await createSessionAuth(requestToken!);
+                  setIsLoggedIn(true);
                 }}
               >
                 Create Session
@@ -198,7 +195,7 @@ const Watchlist = () => {
                       className="pb-8"
                       ref={tvShowDirection}
                     />
-                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 pb-20">
+                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 pb-10">
                       {watchlistTVShows?.results?.map((tvShow) => (
                         <WishlistCard
                           key={tvShow.id}

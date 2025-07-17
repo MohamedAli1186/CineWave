@@ -18,3 +18,14 @@ export const createSessionAuth = async (token: string) => {
     showToast({ message: "API error (session/new)", type: "error" });
   }
 };
+
+export const getSessionId = () => {
+  const sessionId = localStorage.getItem("session_id");
+  return sessionId;
+};
+
+export const removeSessionId = () => {
+  localStorage.removeItem("session_id");
+  localStorage.removeItem("request_token");
+  showToast({ message: "Session removed successfully" });
+};

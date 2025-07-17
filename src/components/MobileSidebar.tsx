@@ -1,6 +1,12 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-
+import {
+  createSessionAuth,
+  getSessionId,
+  removeSessionId,
+} from "../utils/auth";
+import { showToast } from "./global/Toast";
+import { createToken } from "../services/tmdb";
 interface MobileSidebarProps {
   open: boolean;
   onClose: () => void;
@@ -14,6 +20,27 @@ const links = [
 ];
 
 const MobileSidebar: React.FC<MobileSidebarProps> = ({ open, onClose }) => {
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
+  const sessionId = getSessionId();
+  const requestToken = localStorage.getItem("request_token");
+  useEffect(() => {
+    const checkSessionId = () => {
+      if (sessionId) {
+        setIsLoggedIn(true);
+      }
+    };
+    checkSessionId();
+  }, [sessionId]);
+
+  const fetchSession = async () => {
+    const res = await createToken();
+    if (res.success) {
+      showToast({ message: "Signing up..." });
+    } else {
+      showToast({ message: "Something went wrong.", type: "error" });
+    }
+    window.location.href = `https://www.themoviedb.org/authenticate/${res.request_token}?redirect_to=http://localhost:5173`;
+  };
   return (
     <div
       className={`fixed inset-0 z-40 bg-black/75 bg-opacity-40 pt-20 transition-opacity duration-300 ${
@@ -49,6 +76,39 @@ const MobileSidebar: React.FC<MobileSidebarProps> = ({ open, onClose }) => {
               {link.label}
             </Link>
           ))}
+          {isLoggedIn && sessionId && (
+            <button
+              type="button"
+              className="btn"
+              onClick={() => {
+                removeSessionId();
+                showToast({ message: "Logged out successfully" });
+              }}
+            >
+              Log out
+            </button>
+          )}
+          {!isLoggedIn && !sessionId && !requestToken && (
+            <button
+              type="button"
+              className="btn"
+              onClick={() => fetchSession()}
+            >
+              Signup
+            </button>
+          )}
+          {requestToken && !sessionId && (
+            <button
+              type="button"
+              className="pink-btn transition hover:scale-105"
+              onClick={async () => {
+                await createSessionAuth(requestToken!);
+                setIsLoggedIn(true);
+              }}
+            >
+              Create Session
+            </button>
+          )}
         </nav>
       </aside>
     </div>

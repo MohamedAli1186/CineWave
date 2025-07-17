@@ -35,6 +35,10 @@
   @apply md:px-36 px-6;
 }
 
+.small-title {
+  @apply text-2xl font-bold mb-4 text-center md:text-start;
+}
+
 @media (prefers-reduced-motion: no-preference) {
   a:nth-of-type(2) .logo {
     animation: logo-spin infinite 20s linear;
@@ -42,7 +46,7 @@
 }
 
 .btn {
-  @apply bg-[#40292B] text-white px-4 py-2 rounded-3xl cursor-pointer hover:scale-105 transition-transform duration-200;
+  @apply bg-[#40292B] text-white px-4 py-2 rounded-3xl cursor-pointer hover:scale-105 transition-transform duration-200 text-nowrap h-fit;
 }
 
 .pink-btn {

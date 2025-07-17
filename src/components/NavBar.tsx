@@ -1,12 +1,46 @@
 import { Link } from "react-router-dom";
 import logo from "../../public/CineWave.png";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import MobileSidebar from "./MobileSidebar";
-import SearchMulti from "./SearchMulti";
+import SearchMulti from "./global/SearchMulti";
+import {
+  createSessionAuth,
+  getSessionId,
+  removeSessionId,
+} from "../utils/auth";
+import { createToken } from "../services/tmdb";
+import { showToast } from "./global/Toast";
+
+const links = [
+  { to: "/", label: "Home" },
+  { to: "/movies", label: "Movies" },
+  { to: "/tv-shows", label: "TV Shows" },
+  { to: "/watchlist", label: "Watchlist" },
+];
 
 const Navbar = () => {
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const requestToken = localStorage.getItem("request_token");
+  const sessionId = getSessionId();
+  useEffect(() => {
+    const checkSessionId = () => {
+      if (sessionId) {
+        setIsLoggedIn(true);
+      }
+    };
+    checkSessionId();
+  }, []);
+
+  const fetchSession = async () => {
+    const res = await createToken();
+    if (res.success) {
+      showToast({ message: "Signing up..." });
+    } else {
+      showToast({ message: "Something went wrong.", type: "error" });
+    }
+    window.location.href = `https://www.themoviedb.org/authenticate/${res.request_token}?redirect_to=http://localhost:5173`;
+  };
 
   return (
     <>
@@ -34,59 +68,59 @@ const Navbar = () => {
           </Link>
           {/* Nav Links: hidden on mobile */}
           <ul className="hidden md:flex space-x-4 pt-2">
-            <li>
-              <Link
-                to="/"
-                className="hover:text-gray-200"
-                onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-              >
-                Home
-              </Link>
-            </li>
-            <li>
-              <Link
-                to="/movies"
-                className="hover:text-gray-200"
-                onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-              >
-                Movies
-              </Link>
-            </li>
-            <li>
-              <Link
-                to="/tv-shows"
-                className="hover:text-gray-200"
-                onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-              >
-                TV Shows
-              </Link>
-            </li>
-            <li>
-              <Link
-                to="/watchlist"
-                className="hover:text-gray-200"
-                onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-              >
-                Watchlist
-              </Link>
-            </li>
+            {links.map((link) => (
+              <li key={link.to}>
+                <Link
+                  to={link.to}
+                  className="hover:text-gray-200"
+                  onClick={() =>
+                    window.scrollTo({ top: 0, behavior: "smooth" })
+                  }
+                >
+                  {link.label}
+                </Link>
+              </li>
+            ))}
           </ul>
         </div>
         {/* Right: Search/Profile/Signup */}
         <div className="flex items-center">
           {isLoggedIn ? (
-            <Link
-              to="/signup"
-              className="btn"
-              onClick={() => setIsLoggedIn(true)}
-            >
-              Signup
-            </Link>
-          ) : (
             <div className="relative flex items-center gap-4">
               <SearchMulti />
-              {/* <img src={profile} alt="Profile" className="w-10 h-auto" /> */}
+              <button
+                type="button"
+                className="pink-btn hidden md:flex"
+                onClick={() => {
+                  removeSessionId();
+                  setIsLoggedIn(false);
+                }}
+              >
+                Log out
+              </button>
             </div>
+          ) : !requestToken ? (
+            <button
+              type="button"
+              className="btn"
+              onClick={() => fetchSession()}
+            >
+              Signup
+            </button>
+          ) : (
+            requestToken &&
+            !sessionId && (
+              <button
+                type="button"
+                className="pink-btn transition hover:scale-105"
+                onClick={async () => {
+                  await createSessionAuth(requestToken!);
+                  setIsLoggedIn(true);
+                }}
+              >
+                Create Session
+              </button>
+            )
           )}
         </div>
       </nav>

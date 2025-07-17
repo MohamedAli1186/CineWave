@@ -9,7 +9,7 @@ function App() {
       <Navbar />
       <AppRoutes />
       <Toaster
-        position="top-right"
+        position="bottom-right"
         toastOptions={{
           style: {
             background: "#40292B",

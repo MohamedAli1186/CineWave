@@ -1,65 +1,25 @@
-import { Link, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import {
-  addToWatchlist,
   getMovie,
   getMovieCast,
+  getMovieVideos,
   getSimilarMovies,
 } from "../services/tmdb";
 import { useEffect, useState } from "react";
-import type { IMovie, IMovieCast, IMovies } from "../types/movies";
-import PosterCard from "../components/PosterCard";
-import Carousel from "react-multi-carousel";
-import "react-multi-carousel/lib/styles.css";
-import Cast from "../components/Cast";
+import type { IMovie, IMovieCast, IMovies, IVideo } from "../types/movies";
+import Cast from "../components/movieTvPageComponents/Cast";
 import ProductionCompanies from "../components/ProductionCompanies";
 import MoviesImages from "../components/MoviesImages";
-import { showToast } from "../components/global/Toast";
+import BtnsResources from "../components/movieTvPageComponents/BtnsResources";
+import SimilarMovies from "../components/movieTvPageComponents/SimilarMovies";
+import Trailers from "../components/movieTvPageComponents/Trailers";
 
-const responsive = {
-  desktop: {
-    breakpoint: { max: 3000, min: 1024 },
-    items: 4,
-    slidesToSlide: 1,
-  },
-  tablet: {
-    breakpoint: { max: 1024, min: 464 },
-    items: 3,
-    slidesToSlide: 1,
-  },
-  mobile: {
-    breakpoint: { max: 464, min: 0 },
-    items: 2,
-    slidesToSlide: 1,
-  },
-};
 const MoviePage = () => {
   const { id } = useParams();
   const [movieData, setMovieData] = useState<IMovie>();
   const [cast, setCast] = useState<IMovieCast>();
   const [similarMovies, setSimilarMovies] = useState<IMovies[]>();
-
-  const sessionId = localStorage.getItem("session_id");
-
-  const addToWatchlists = async (media_type: string, movieId: number) => {
-    if (!sessionId) {
-      console.log("No session ID found");
-      return;
-    }
-    try {
-      const res = await addToWatchlist(sessionId, media_type, movieId);
-      if (res.success) {
-        showToast({ message: "Added to Watchlist!" });
-      } else {
-        showToast({ message: "Something went wrong.", type: "error" });
-      }
-    } catch (err) {
-      showToast({
-        message: "Failed to add movie to watchlist.",
-        type: "error",
-      });
-      console.error(err);
-    }
-  };
+  const [trailer, setTrailer] = useState<IVideo[]>();
 
   useEffect(() => {
     const fetchMovie = async () => {
@@ -69,6 +29,8 @@ const MoviePage = () => {
       setCast(castRes);
       const similarMoviesRes = await getSimilarMovies(+id!);
       setSimilarMovies(similarMoviesRes.results);
+      const trailerRes = await getMovieVideos(+id!);
+      setTrailer(trailerRes.results);
     };
     fetchMovie();
   }, [id]);
@@ -105,20 +67,10 @@ const MoviePage = () => {
             <h1 className="text-4xl font-bold md:text-start text-center">
               {movieData?.title}
             </h1>
-            <div className="flex gap-4">
-              <Link to={movieData?.homepage} className="btn" target="_blank">
-                See More
-              </Link>
-              <button
-                type="button"
-                className="pink-btn"
-                onClick={() => {
-                  addToWatchlists("movie", movieData.id);
-                }}
-              >
-                Add to Watchlist
-              </button>
-            </div>
+            <BtnsResources
+              showId={movieData?.id}
+              homePage={movieData?.homepage}
+            />
           </div>
           {movieData?.tagline && (
             <p className="text-lg italic md:text-start text-center text-gray-300">
@@ -179,37 +131,11 @@ const MoviePage = () => {
       {/* Cast */}
       <Cast cast={cast} />
 
+      {/* Trailers */}
+      {trailer && <Trailers trailer={trailer} />}
+
       {/* Similar Movies */}
-      {similarMovies?.length > 0 && (
-        <section className="mt-12 w-full p-container" key={id}>
-          <h2 className="text-3xl md:text-start text-center font-semibold mb-6">
-            Similar Movies
-          </h2>
-          <Carousel
-            swipeable={true}
-            draggable={true}
-            responsive={responsive}
-            ssr={true} // means to render carousel on server-side.
-            keyBoardControl={true}
-            transitionDuration={500}
-            containerClass=""
-            removeArrowOnDeviceType={["mobile"]}
-            dotListClass="custom-dot-list-style"
-            itemClass="sm:p-5 p-3"
-          >
-            {similarMovies?.map((movie) => (
-              <PosterCard
-                key={movie.id}
-                id={movie.id}
-                type="movie"
-                image={movie.poster_path}
-                title={movie.title}
-                subtitle={movie.overview}
-              />
-            ))}
-          </Carousel>
-        </section>
-      )}
+      <SimilarMovies similar={similarMovies} />
     </main>
   );
 };
