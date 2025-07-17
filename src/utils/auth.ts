@@ -6,7 +6,6 @@ export const createSessionAuth = async (token: string) => {
     const data = await createSession(token);
     if (data.success) {
       const sessionId = data.session_id;
-      console.log(sessionId);
       localStorage.setItem("session_id", sessionId);
       showToast({ message: "Session created successfully" });
     } else {

@@ -1,8 +1,8 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import broken from "../../public/broke.webp";
+import broken from "../../../public/broke.webp";
 
-interface WishlistCardProps {
+interface PosterCardProps {
   image: string;
   title: string;
   subtitle?: string;
@@ -10,7 +10,7 @@ interface WishlistCardProps {
   type?: string;
 }
 
-const WishlistCard: React.FC<WishlistCardProps> = ({
+const PosterCard: React.FC<PosterCardProps> = ({
   image,
   title,
   subtitle,
@@ -28,16 +28,16 @@ const WishlistCard: React.FC<WishlistCardProps> = ({
       <img
         src={image ? `https://image.tmdb.org/t/p/w500${image}` : broken}
         alt={title}
-        className="w-full h-[150px] object-cover mb-3 hover:scale-105 transition-transform duration-200"
+        className="w-full h-full object-cover mb-3 hover:scale-105 transition-transform duration-200"
       />
       <h3 className="text-lg font-semibold mb-1 text-white text-center truncate w-full px-3">
         {title}
       </h3>
-      <p className="text-sm text-[#E8B5B8] truncate text-center w-full px-3">
+      <p className="text-sm text-[#E8B5B8] h-6 text-center truncate w-full px-3">
         {subtitle}
       </p>
     </Link>
   );
 };
 
-export default WishlistCard;
+export default PosterCard;

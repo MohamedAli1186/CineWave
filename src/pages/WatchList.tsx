@@ -6,15 +6,15 @@ import {
   getTVShowWatchlist,
 } from "../services/tmdb";
 import type { IMovies, INode, ISearch, ITVShow } from "../types/movies";
-import PosterCard from "../components/PosterCard";
+import PosterCard from "../components/global/PosterCard";
 import { createSessionAuth } from "../utils/auth";
 import Carousel from "react-multi-carousel";
 import ShinyText from "../blocks/TextAnimations/ShinyText/ShinyText";
-import WishlistCard from "../components/WishlistCard";
 import Pagination from "../components/global/Pagination";
 import { showToast } from "../components/global/Toast";
 import { responsive } from "../utils/cursorResponsive";
 import { getSessionId } from "../utils/auth";
+import WishlistCard from "../components/global/WishlistCard";
 
 const Watchlist = () => {
   const sessionId = getSessionId();
@@ -26,7 +26,7 @@ const Watchlist = () => {
   const [tvShowsPage, setTvShowsPage] = useState(1);
   const [featured, setFeatured] = useState<ISearch[]>([]);
   const requestToken = localStorage.getItem("request_token");
-  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
+  const [, setIsLoggedIn] = useState<boolean>(false);
   // Fetch featured movies regardless of session
   useEffect(() => {
     const fetchFeatured = async () => {

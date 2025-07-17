@@ -1,4 +1,4 @@
-import PosterCard from "../PosterCard";
+import PosterCard from "../global/PosterCard";
 import Carousel from "react-multi-carousel";
 import { responsive } from "../../utils/cursorResponsive";
 import type { IMovies, ITVShow } from "../../types/movies";

@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import Pagination from "./global/Pagination";
-import PosterCard from "./PosterCard";
+import PosterCard from "./global/PosterCard";
 import type { INode, IMovies } from "../types/movies";
 import { getPopularMovies } from "../services/tmdb";
 import ShinyText from "../blocks/TextAnimations/ShinyText/ShinyText";

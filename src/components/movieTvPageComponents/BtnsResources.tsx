@@ -12,7 +12,6 @@ const BtnsResources = ({
   const sessionId = getSessionId();
   const addToWatchlists = async (media_type: string, movieId: number) => {
     if (!sessionId) {
-      console.log("No session ID found");
       return;
     }
     try {

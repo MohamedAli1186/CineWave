@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import PosterCard from "../components/PosterCard";
+import PosterCard from "../components/global/PosterCard";
 import { getMovies } from "../services/tmdb";
 import type { IMovies, INode } from "../types/movies";
 import SearchMulti from "../components/global/SearchMulti";
@@ -39,7 +39,7 @@ const Movies = () => {
         text="Movies"
         disabled={false}
         speed={3}
-        className="my-8"
+        className="my-6"
       />
       <MoviesFiltering
         genre={genre}

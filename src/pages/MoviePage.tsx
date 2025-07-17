@@ -77,14 +77,6 @@ const MoviePage = () => {
               {movieData?.tagline}
             </p>
           )}
-          {movieData?.video &&
-            (console.log(movieData?.video),
-            (
-              <p className="text-lg italic md:text-start text-center text-gray-300">
-                {movieData?.video}
-              </p>
-            ))}
-
           <div className="text-sm flex gap-6 text-gray-400">
             <p>🗓️ {movieData?.release_date}</p>
             <p>⏱️ {movieData?.runtime} min</p>

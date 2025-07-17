@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import PosterCard from "../components/PosterCard";
+import PosterCard from "../components/global/PosterCard";
 import { getTVShows } from "../services/tmdb";
 import type { ITVShow, INode } from "../types/movies";
 import SearchMulti from "../components/global/SearchMulti";
