@@ -39,7 +39,7 @@ const MobileSidebar: React.FC<MobileSidebarProps> = ({ open, onClose }) => {
     } else {
       showToast({ message: "Something went wrong.", type: "error" });
     }
-    window.location.href = `https://www.themoviedb.org/authenticate/${res.request_token}?redirect_to=http://localhost:5173`;
+    window.location.href = `https://www.themoviedb.org/authenticate/${res.request_token}?redirect_to=https://cinewavee.vercel.app/`;
   };
   return (
     <div
