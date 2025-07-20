@@ -1,12 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { Link } from "react-router-dom";
-import {
-  createSessionAuth,
-  getSessionId,
-  removeSessionId,
-} from "../utils/auth";
 import { showToast } from "./global/Toast";
 import { createToken } from "../services/tmdb";
+import { useAuth } from "../hooks/useAuth";
 interface MobileSidebarProps {
   open: boolean;
   onClose: () => void;
@@ -21,17 +17,8 @@ const links = [
 
 const MobileSidebar: React.FC<MobileSidebarProps> = ({ open, onClose }) => {
   const lastPageUrl = window.location.href;
-  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
-  const sessionId = getSessionId();
+  const { sessionId, isLoggedIn, login, logout } = useAuth();
   const requestToken = localStorage.getItem("request_token");
-  useEffect(() => {
-    const checkSessionId = () => {
-      if (sessionId) {
-        setIsLoggedIn(true);
-      }
-    };
-    checkSessionId();
-  }, [sessionId]);
 
   const fetchSession = async () => {
     const res = await createToken();
@@ -80,9 +67,9 @@ const MobileSidebar: React.FC<MobileSidebarProps> = ({ open, onClose }) => {
           {isLoggedIn && sessionId && (
             <button
               type="button"
-              className="btn"
+              className="pink-btn"
               onClick={() => {
-                removeSessionId();
+                logout();
                 showToast({ message: "Logged out successfully" });
               }}
             >
@@ -92,7 +79,7 @@ const MobileSidebar: React.FC<MobileSidebarProps> = ({ open, onClose }) => {
           {!isLoggedIn && !sessionId && !requestToken && (
             <button
               type="button"
-              className="btn"
+              className="pink-btn"
               onClick={() => fetchSession()}
             >
               Signup
@@ -103,8 +90,7 @@ const MobileSidebar: React.FC<MobileSidebarProps> = ({ open, onClose }) => {
               type="button"
               className="pink-btn transition hover:scale-105"
               onClick={async () => {
-                await createSessionAuth(requestToken!);
-                setIsLoggedIn(true);
+                await login(requestToken!);
               }}
             >
               Create Session
