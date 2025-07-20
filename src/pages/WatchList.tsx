@@ -154,80 +154,75 @@ const Watchlist = () => {
               </button>
             )}
           </div>
-        ) : watchlistMovies?.results?.length === 0 ? (
+        ) : watchlistMovies?.results?.length === 0 ||
+          watchlistTVShows?.results?.length === 0 ? (
           <p className="text-center text-gray-400">
             You haven’t added anything to your watchlist yet.
           </p>
         ) : (
-          <>
-            {!watchlistMovies?.results?.length ||
-            !watchlistTVShows?.results?.length ? (
-              <p className="text-center text-gray-400">
-                You haven’t added anything to your watchlist yet.
-              </p>
-            ) : (
-              <>
-                {watchlistMovies?.results?.length > 0 && (
-                  <>
-                    <ShinyText
-                      text="Your Movies Watchlist"
-                      disabled={false}
-                      speed={3}
-                      className="pb-8"
-                      ref={movieDirection}
-                    />
-                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 mb-10">
-                      {watchlistMovies?.results?.map((movie) => (
-                        <WishlistCard
-                          key={movie.id}
-                          image={movie.backdrop_path}
-                          title={movie.title}
-                          id={movie.id}
-                          type="movie"
-                          subtitle={movie.overview}
-                        />
-                      ))}
-                    </div>
-                    <Pagination
-                      pageNo={moviesPage}
-                      total_pages={watchlistMovies?.total_pages}
-                      setPageNo={setMoviesPage}
-                      direction={movieDirection}
-                    />
-                  </>
-                )}
-                {watchlistTVShows?.results?.length > 0 && (
-                  <>
-                    <ShinyText
-                      text="Your TV Shows Watchlist"
-                      disabled={false}
-                      speed={3}
-                      className="pb-8"
-                      ref={tvShowDirection}
-                    />
-                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 pb-10">
-                      {watchlistTVShows?.results?.map((tvShow) => (
-                        <WishlistCard
-                          key={tvShow.id}
-                          image={tvShow.backdrop_path}
-                          title={tvShow.name}
-                          id={tvShow.id}
-                          type="tv"
-                          subtitle={tvShow.overview}
-                        />
-                      ))}
-                    </div>
-                    <Pagination
-                      pageNo={tvShowsPage}
-                      total_pages={watchlistTVShows?.total_pages}
-                      setPageNo={setTvShowsPage}
-                      direction={tvShowDirection}
-                    />
-                  </>
-                )}
-              </>
-            )}
-          </>
+          watchlistMovies?.results &&
+          watchlistTVShows?.results && (
+            <>
+              {watchlistMovies?.results?.length > 0 && (
+                <>
+                  <ShinyText
+                    text="Your Movies Watchlist"
+                    disabled={false}
+                    speed={3}
+                    className="pb-8"
+                    ref={movieDirection}
+                  />
+                  <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 mb-10">
+                    {watchlistMovies?.results?.map((movie) => (
+                      <WishlistCard
+                        key={movie.id}
+                        image={movie.backdrop_path}
+                        title={movie.title}
+                        id={movie.id}
+                        type="movie"
+                        subtitle={movie.overview}
+                      />
+                    ))}
+                  </div>
+                  <Pagination
+                    pageNo={moviesPage}
+                    total_pages={watchlistMovies?.total_pages}
+                    setPageNo={setMoviesPage}
+                    direction={movieDirection}
+                  />
+                </>
+              )}
+              {watchlistTVShows?.results?.length > 0 && (
+                <>
+                  <ShinyText
+                    text="Your TV Shows Watchlist"
+                    disabled={false}
+                    speed={3}
+                    className="pb-8"
+                    ref={tvShowDirection}
+                  />
+                  <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 pb-10">
+                    {watchlistTVShows?.results?.map((tvShow) => (
+                      <WishlistCard
+                        key={tvShow.id}
+                        image={tvShow.backdrop_path}
+                        title={tvShow.name}
+                        id={tvShow.id}
+                        type="tv"
+                        subtitle={tvShow.overview}
+                      />
+                    ))}
+                  </div>
+                  <Pagination
+                    pageNo={tvShowsPage}
+                    total_pages={watchlistTVShows?.total_pages}
+                    setPageNo={setTvShowsPage}
+                    direction={tvShowDirection}
+                  />
+                </>
+              )}
+            </>
+          )
         )}
       </section>
     </main>
