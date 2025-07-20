@@ -1,15 +1,11 @@
 import { Link } from "react-router-dom";
 import logo from "../../public/CineWave.png";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import MobileSidebar from "./MobileSidebar";
 import SearchMulti from "./global/SearchMulti";
-import {
-  createSessionAuth,
-  getSessionId,
-  removeSessionId,
-} from "../utils/auth";
 import { createToken } from "../services/tmdb";
 import { showToast } from "./global/Toast";
+import { useAuth } from "../hooks/useAuth";
 
 const links = [
   { to: "/", label: "Home" },
@@ -19,18 +15,9 @@ const links = [
 ];
 
 const Navbar = () => {
-  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const requestToken = localStorage.getItem("request_token");
-  const sessionId = getSessionId();
-  useEffect(() => {
-    const checkSessionId = () => {
-      if (sessionId) {
-        setIsLoggedIn(true);
-      }
-    };
-    checkSessionId();
-  }, []);
+  const { sessionId, isLoggedIn, login, logout } = useAuth();
 
   const fetchSession = async () => {
     const res = await createToken();
@@ -92,8 +79,7 @@ const Navbar = () => {
                 type="button"
                 className="pink-btn hidden md:flex"
                 onClick={() => {
-                  removeSessionId();
-                  setIsLoggedIn(false);
+                  logout();
                 }}
               >
                 Log out
@@ -114,8 +100,7 @@ const Navbar = () => {
                 type="button"
                 className="pink-btn transition hover:scale-105"
                 onClick={async () => {
-                  await createSessionAuth(requestToken!);
-                  setIsLoggedIn(true);
+                  await login(requestToken!);
                 }}
               >
                 Create Session

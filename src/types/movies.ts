@@ -305,4 +305,3 @@ export interface IVideo {
   published_at: string;
   id: string;
 }
-[];

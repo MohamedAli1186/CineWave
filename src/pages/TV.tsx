@@ -15,9 +15,11 @@ import { getSessionId } from "../utils/auth";
 import { showToast } from "../components/global/Toast";
 import SimilarMovies from "../components/movieTvPageComponents/SimilarMovies";
 import Trailers from "../components/movieTvPageComponents/Trailers";
+import { useAuth } from "../hooks/useAuth";
 
 const TVPage = () => {
   const { id } = useParams();
+  const { isLoggedIn } = useAuth();
   const [tvShowData, setTvShowData] = useState<ITVShows>();
   const [cast, setCast] = useState<IMovieCast>();
   const [similar, setSimilar] = useState<ITVShow[]>();
@@ -92,14 +94,13 @@ const TVPage = () => {
               <Link to={tvShowData?.homepage} className="btn" target="_blank">
                 See More
               </Link>
-              {sessionId && (
+              {isLoggedIn && sessionId && (
                 <button
                   type="button"
                   className="pink-btn"
                   onClick={() => {
                     addToWatchlists("tv", tvShowData?.id);
                   }}
-                  disabled={!sessionId}
                 >
                   Add to Watchlist
                 </button>

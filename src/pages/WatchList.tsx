@@ -7,17 +7,16 @@ import {
 } from "../services/tmdb";
 import type { IMovies, INode, ISearch, ITVShow } from "../types/movies";
 import PosterCard from "../components/global/PosterCard";
-import { createSessionAuth } from "../utils/auth";
 import Carousel from "react-multi-carousel";
 import ShinyText from "../blocks/TextAnimations/ShinyText/ShinyText";
 import Pagination from "../components/global/Pagination";
 import { showToast } from "../components/global/Toast";
 import { responsive } from "../utils/cursorResponsive";
-import { getSessionId } from "../utils/auth";
 import WishlistCard from "../components/global/WishlistCard";
+import { useAuth } from "../hooks/useAuth";
 
 const Watchlist = () => {
-  const sessionId = getSessionId();
+  const { sessionId, isLoggedIn, login } = useAuth();
   const movieDirection = useRef(null);
   const tvShowDirection = useRef(null);
   const [watchlistMovies, setWatchlistMovies] = useState<INode<IMovies[]>>();
@@ -26,7 +25,7 @@ const Watchlist = () => {
   const [tvShowsPage, setTvShowsPage] = useState(1);
   const [featured, setFeatured] = useState<ISearch[]>([]);
   const requestToken = localStorage.getItem("request_token");
-  const [, setIsLoggedIn] = useState<boolean>(false);
+
   // Fetch featured movies regardless of session
   useEffect(() => {
     const fetchFeatured = async () => {
@@ -36,38 +35,42 @@ const Watchlist = () => {
     fetchFeatured();
   }, []);
 
-  //rerender if session deleted
+  // Fetch user watchlist when logged in or when session changes
   useEffect(() => {
-    const checkSessionId = () => {
-      if (!sessionId) {
-        setIsLoggedIn(false);
-      }
-    };
-    checkSessionId();
-  }, [sessionId]);
-
-  // Fetch user watchlist if session exists
-  useEffect(() => {
-    if (!sessionId) return;
+    if (!isLoggedIn || !sessionId) {
+      setWatchlistMovies(undefined);
+      setWatchlistTVShows(undefined);
+      return;
+    }
 
     const fetchWatchlist = async () => {
-      const res = await getMovieWatchlist(sessionId, moviesPage);
-      setWatchlistMovies({
-        page: moviesPage,
-        results: res?.results,
-        total_pages: res?.total_pages,
-        total_results: res?.total_results,
-      });
-      const res2 = await getTVShowWatchlist(sessionId, tvShowsPage);
-      setWatchlistTVShows({
-        page: tvShowsPage,
-        results: res2?.results,
-        total_pages: res2?.total_pages,
-        total_results: res2?.total_results,
-      });
+      try {
+        const [moviesRes, tvShowsRes] = await Promise.all([
+          getMovieWatchlist(sessionId, moviesPage),
+          getTVShowWatchlist(sessionId, tvShowsPage),
+        ]);
+
+        setWatchlistMovies({
+          page: moviesPage,
+          results: moviesRes?.results || [],
+          total_pages: moviesRes?.total_pages || 0,
+          total_results: moviesRes?.total_results || 0,
+        });
+
+        setWatchlistTVShows({
+          page: tvShowsPage,
+          results: tvShowsRes?.results || [],
+          total_pages: tvShowsRes?.total_pages || 0,
+          total_results: tvShowsRes?.total_results || 0,
+        });
+      } catch (error) {
+        console.error("Error fetching watchlist:", error);
+        showToast({ message: "Failed to load watchlist", type: "error" });
+      }
     };
+
     fetchWatchlist();
-  }, [sessionId, moviesPage, tvShowsPage]);
+  }, [isLoggedIn, sessionId, moviesPage, tvShowsPage]);
 
   const fetchSession = async () => {
     const res = await createToken();
@@ -114,7 +117,7 @@ const Watchlist = () => {
       </section>
 
       <section className="mt-12 pb-20">
-        {!sessionId ? (
+        {!isLoggedIn ? (
           <div className="text-center py-10 bg-[#40292B] rounded-xl">
             <p className="text-3xl mb-4 px-2">
               Want to save your favorite movies and shows? <br />
@@ -131,13 +134,12 @@ const Watchlist = () => {
                 Start Now
               </button>
             )}
-            {requestToken && !sessionId && (
+            {requestToken && !isLoggedIn && (
               <button
                 type="button"
                 className="pink-btn transition hover:scale-105"
                 onClick={async () => {
-                  await createSessionAuth(requestToken!);
-                  setIsLoggedIn(true);
+                  await login(requestToken!);
                 }}
               >
                 Create Session

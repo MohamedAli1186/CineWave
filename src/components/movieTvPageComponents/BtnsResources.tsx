@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { showToast } from "../global/Toast";
 import { addToWatchlist } from "../../services/tmdb";
 import { getSessionId } from "../../utils/auth";
+import { useAuth } from "../../hooks/useAuth";
 const BtnsResources = ({
   showId,
   homePage,
@@ -9,6 +10,7 @@ const BtnsResources = ({
   showId: number;
   homePage: string;
 }) => {
+  const { isLoggedIn } = useAuth();
   const sessionId = getSessionId();
   const addToWatchlists = async (media_type: string, movieId: number) => {
     if (!sessionId) {
@@ -34,14 +36,13 @@ const BtnsResources = ({
       <Link to={homePage} className="btn" target="_blank">
         See More
       </Link>
-      {sessionId && (
+      {isLoggedIn && sessionId && (
         <button
           type="button"
           className="pink-btn"
           onClick={() => {
             addToWatchlists("movie", showId);
           }}
-          disabled={!sessionId}
         >
           Add to Watchlist
         </button>
