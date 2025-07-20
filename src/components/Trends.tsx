@@ -25,14 +25,14 @@ const Trends = () => {
     <section className="mx-auto py-10">
       <Carousel
         swipeable={true}
-        draggable={true}
+        draggable={false}
         autoPlay
         infinite
         responsive={responsive}
         ssr={true}
         keyBoardControl={true}
         transitionDuration={500}
-        arrows={false}
+        arrows={true}
         removeArrowOnDeviceType={["mobile"]}
       >
         {trends.map((movie) => (
