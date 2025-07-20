@@ -14,10 +14,12 @@ import { showToast } from "../components/global/Toast";
 import { responsive } from "../utils/cursorResponsive";
 import WishlistCard from "../components/global/WishlistCard";
 import { useAuth } from "../hooks/useAuth";
+import { useLoader } from "../hooks/useLoader";
 
 const Watchlist = () => {
   const { sessionId, isLoggedIn, login } = useAuth();
   const movieDirection = useRef(null);
+  const lastPageUrl = window.location.href;
   const tvShowDirection = useRef(null);
   const [watchlistMovies, setWatchlistMovies] = useState<INode<IMovies[]>>();
   const [watchlistTVShows, setWatchlistTVShows] = useState<INode<ITVShow[]>>();
@@ -25,14 +27,17 @@ const Watchlist = () => {
   const [tvShowsPage, setTvShowsPage] = useState(1);
   const [featured, setFeatured] = useState<ISearch[]>([]);
   const requestToken = localStorage.getItem("request_token");
-
+  const { startLoading, stopLoading } = useLoader();
   // Fetch featured movies regardless of session
   useEffect(() => {
     const fetchFeatured = async () => {
+      startLoading();
       const res = await getAllTrends();
       setFeatured(res.results);
+      stopLoading();
     };
     fetchFeatured();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Fetch user watchlist when logged in or when session changes
@@ -44,6 +49,7 @@ const Watchlist = () => {
     }
 
     const fetchWatchlist = async () => {
+      startLoading();
       try {
         const [moviesRes, tvShowsRes] = await Promise.all([
           getMovieWatchlist(sessionId, moviesPage),
@@ -67,9 +73,11 @@ const Watchlist = () => {
         console.error("Error fetching watchlist:", error);
         showToast({ message: "Failed to load watchlist", type: "error" });
       }
+      stopLoading();
     };
 
     fetchWatchlist();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isLoggedIn, sessionId, moviesPage, tvShowsPage]);
 
   const fetchSession = async () => {
@@ -79,7 +87,7 @@ const Watchlist = () => {
     } else {
       showToast({ message: "Something went wrong.", type: "error" });
     }
-    window.location.href = `https://www.themoviedb.org/authenticate/${res.request_token}?redirect_to=https://cinewavee.vercel.app/`;
+    window.location.href = `https://www.themoviedb.org/authenticate/${res.request_token}?redirect_to=${lastPageUrl}`;
   };
 
   return (

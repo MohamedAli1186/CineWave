@@ -15,6 +15,7 @@ const links = [
 ];
 
 const Navbar = () => {
+  const lastPageUrl = window.location.href;
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const requestToken = localStorage.getItem("request_token");
   const { sessionId, isLoggedIn, login, logout } = useAuth();
@@ -26,7 +27,7 @@ const Navbar = () => {
     } else {
       showToast({ message: "Something went wrong.", type: "error" });
     }
-    window.location.href = `https://www.themoviedb.org/authenticate/${res.request_token}?redirect_to=https://cinewavee.vercel.app/`;
+    window.location.href = `https://www.themoviedb.org/authenticate/${res.request_token}?redirect_to=${lastPageUrl}`;
   };
 
   return (

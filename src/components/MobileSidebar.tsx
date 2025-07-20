@@ -20,6 +20,7 @@ const links = [
 ];
 
 const MobileSidebar: React.FC<MobileSidebarProps> = ({ open, onClose }) => {
+  const lastPageUrl = window.location.href;
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
   const sessionId = getSessionId();
   const requestToken = localStorage.getItem("request_token");
@@ -39,7 +40,7 @@ const MobileSidebar: React.FC<MobileSidebarProps> = ({ open, onClose }) => {
     } else {
       showToast({ message: "Something went wrong.", type: "error" });
     }
-    window.location.href = `https://www.themoviedb.org/authenticate/${res.request_token}?redirect_to=https://cinewavee.vercel.app/`;
+    window.location.href = `https://www.themoviedb.org/authenticate/${res.request_token}?redirect_to=${lastPageUrl}`;
   };
   return (
     <div

@@ -13,9 +13,11 @@ import MoviesImages from "../components/MoviesImages";
 import BtnsResources from "../components/movieTvPageComponents/BtnsResources";
 import SimilarMovies from "../components/movieTvPageComponents/SimilarMovies";
 import Trailers from "../components/movieTvPageComponents/Trailers";
+import { useLoader } from "../hooks/useLoader";
 
 const MoviePage = () => {
   const { id } = useParams();
+  const { startLoading, stopLoading } = useLoader();
   const [movieData, setMovieData] = useState<IMovie>();
   const [cast, setCast] = useState<IMovieCast>();
   const [similarMovies, setSimilarMovies] = useState<IMovies[]>();
@@ -23,6 +25,7 @@ const MoviePage = () => {
 
   useEffect(() => {
     const fetchMovie = async () => {
+      startLoading();
       const res = await getMovie(+id!);
       setMovieData(res);
       const castRes = await getMovieCast(+id!);
@@ -31,8 +34,10 @@ const MoviePage = () => {
       setSimilarMovies(similarMoviesRes.results);
       const trailerRes = await getMovieVideos(+id!);
       setTrailer(trailerRes.results);
+      stopLoading();
     };
     fetchMovie();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
   if (!movieData || !cast || !similarMovies)

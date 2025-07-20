@@ -6,12 +6,14 @@ import SearchMulti from "../components/global/SearchMulti";
 import Pagination from "../components/global/Pagination";
 import ShinyText from "../blocks/TextAnimations/ShinyText/ShinyText";
 import MoviesFiltering from "../components/MoviesFiltering";
+import { useLoader } from "../hooks/useLoader";
 
 const Movies = () => {
   const direction = useRef(null);
   const [genre, setGenre] = useState<number>();
   const [year, setYear] = useState<number>();
   const [pageNo, setPageNo] = useState(1);
+  const { startLoading, stopLoading } = useLoader();
   const [movies, setMovies] = useState<INode<IMovies[]>>();
 
   useEffect(() => {
@@ -20,6 +22,7 @@ const Movies = () => {
 
   useEffect(() => {
     const fetchMovies = async () => {
+      startLoading();
       const res = await getMovies(pageNo, genre, year);
       setMovies({
         page: pageNo,
@@ -27,8 +30,10 @@ const Movies = () => {
         total_pages: res?.total_pages,
         total_results: res?.total_results,
       });
+      stopLoading();
     };
     fetchMovies();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pageNo, genre, year]);
 
   return (

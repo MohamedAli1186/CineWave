@@ -16,6 +16,7 @@ import { showToast } from "../components/global/Toast";
 import SimilarMovies from "../components/movieTvPageComponents/SimilarMovies";
 import Trailers from "../components/movieTvPageComponents/Trailers";
 import { useAuth } from "../hooks/useAuth";
+import { useLoader } from "../hooks/useLoader";
 
 const TVPage = () => {
   const { id } = useParams();
@@ -25,7 +26,9 @@ const TVPage = () => {
   const [similar, setSimilar] = useState<ITVShow[]>();
   const [trailer, setTrailer] = useState<IVideo[]>();
   const sessionId = getSessionId();
+  const { startLoading, stopLoading } = useLoader();
   const addToWatchlists = async (media_type: string, movieId: number) => {
+    startLoading();
     if (!sessionId) {
       return;
     }
@@ -43,9 +46,11 @@ const TVPage = () => {
       });
       console.error(err);
     }
+    stopLoading();
   };
   useEffect(() => {
     const fetchMovie = async () => {
+      startLoading();
       const res = await getTvShow(+id!);
       setTvShowData(res);
       const castRes = await getTVShowCast(+id!);
@@ -54,8 +59,10 @@ const TVPage = () => {
       setSimilar(similarRes.results);
       const trailerRes = await getTVShowVideos(+id!);
       setTrailer(trailerRes.results);
+      stopLoading();
     };
     fetchMovie();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
   if (!tvShowData || !cast || !similar)

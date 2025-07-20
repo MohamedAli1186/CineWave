@@ -6,12 +6,14 @@ import SearchMulti from "../components/global/SearchMulti";
 import ShinyText from "../blocks/TextAnimations/ShinyText/ShinyText";
 import Pagination from "../components/global/Pagination";
 import TVFiltering from "../components/TVFiltering";
+import { useLoader } from "../hooks/useLoader";
 
 const TVShowPage = () => {
   const [genre, setGenre] = useState<number>();
   const [pageNo, setPageNo] = useState(1);
   const [tvShows, setTvShows] = useState<INode<ITVShow[]>>();
   const direction = useRef(null);
+  const { startLoading, stopLoading } = useLoader();
 
   useEffect(() => {
     setPageNo(1);
@@ -19,6 +21,7 @@ const TVShowPage = () => {
 
   useEffect(() => {
     const fetchTVShows = async () => {
+      startLoading();
       const res = await getTVShows(pageNo, genre);
       setTvShows({
         page: pageNo,
@@ -26,8 +29,10 @@ const TVShowPage = () => {
         total_pages: res?.total_pages,
         total_results: res?.total_results,
       });
+      stopLoading();
     };
     fetchTVShows();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pageNo, genre]);
 
   return (

@@ -39,7 +39,7 @@ const Trends = () => {
           <Link
             to={`/movie/${movie.id}`}
             key={movie.id}
-            className="md:max-h-[630px] flex items-end justify-center"
+            className="md:max-h-[630px] h-[300px] flex items-end justify-center"
           >
             <img
               src={`https://image.tmdb.org/t/p/w1280${movie.backdrop_path}`}
