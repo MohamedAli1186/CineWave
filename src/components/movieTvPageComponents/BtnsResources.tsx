@@ -1,13 +1,14 @@
-import { Link, useLocation } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { showToast } from "../global/Toast";
 import { addToWatchlist } from "../../services/tmdb";
 import { getSessionId } from "../../utils/auth";
 import { useAuth } from "../../hooks/useAuth";
+
+import { useEffect, useState } from "react";
 import {
   addMovieToLocalWatchlist,
   isMovieInLocalWatchlist,
 } from "../../utils/localWatchlist";
-import { useEffect, useState } from "react";
 
 const BtnsResources = ({
   showId,

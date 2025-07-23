@@ -1,6 +1,5 @@
-import { Link, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import {
-  addToWatchlist,
   getSimilarTVShows,
   getTvShow,
   getTVShowCast,
@@ -11,44 +10,19 @@ import type { IMovieCast, ITVShow, ITVShows, IVideo } from "../types/movies";
 import Cast from "../components/movieTvPageComponents/Cast";
 import ProductionCompanies from "../components/movieTvPageComponents/ProductionCompanies";
 import TVImages from "../components/TVImages";
-import { getSessionId } from "../utils/auth";
-import { showToast } from "../components/global/Toast";
 import SimilarMovies from "../components/movieTvPageComponents/SimilarMovies";
 import Trailers from "../components/movieTvPageComponents/Trailers";
-import { useAuth } from "../hooks/useAuth";
 import { useLoader } from "../hooks/useLoader";
 import BtnsResources from "../components/movieTvPageComponents/BtnsResources";
 
 const TVPage = () => {
   const { id } = useParams();
-  const { isLoggedIn } = useAuth();
   const [tvShowData, setTvShowData] = useState<ITVShows>();
   const [cast, setCast] = useState<IMovieCast>();
   const [similar, setSimilar] = useState<ITVShow[]>();
   const [trailer, setTrailer] = useState<IVideo[]>();
-  const sessionId = getSessionId();
   const { startLoading, stopLoading } = useLoader();
-  const addToWatchlists = async (media_type: string, movieId: number) => {
-    startLoading();
-    if (!sessionId) {
-      return;
-    }
-    try {
-      const res = await addToWatchlist(sessionId, media_type, movieId);
-      if (res.success) {
-        showToast({ message: "Added to Watchlist!" });
-      } else {
-        showToast({ message: "Something went wrong.", type: "error" });
-      }
-    } catch (err) {
-      showToast({
-        message: "Failed to add movie to watchlist.",
-        type: "error",
-      });
-      console.error(err);
-    }
-    stopLoading();
-  };
+
   useEffect(() => {
     const fetchMovie = async () => {
       startLoading();
