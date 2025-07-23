@@ -1,25 +1,45 @@
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { showToast } from "../global/Toast";
 import { addToWatchlist } from "../../services/tmdb";
 import { getSessionId } from "../../utils/auth";
 import { useAuth } from "../../hooks/useAuth";
+import {
+  addMovieToLocalWatchlist,
+  isMovieInLocalWatchlist,
+} from "../../utils/localWatchlist";
+import { useEffect, useState } from "react";
+
 const BtnsResources = ({
   showId,
   homePage,
+  isMovie,
 }: {
   showId: number;
   homePage: string;
+  isMovie?: boolean;
 }) => {
   const { isLoggedIn } = useAuth();
   const sessionId = getSessionId();
+  const [isAlreadyInWatchlist, setIsAlreadyInWatchlist] = useState(false);
+
+  useEffect(() => {
+    setIsAlreadyInWatchlist(isMovieInLocalWatchlist(showId));
+  }, [showId]);
+
   const addToWatchlists = async (media_type: string, movieId: number) => {
-    if (!sessionId) {
+    if (!sessionId) return;
+
+    if (isMovieInLocalWatchlist(movieId)) {
+      showToast({ message: "Already added to Watchlist!", type: "info" });
       return;
     }
+
     try {
       const res = await addToWatchlist(sessionId, media_type, movieId);
       if (res.success) {
-        showToast({ message: "Added to Watchlist!" });
+        addMovieToLocalWatchlist(movieId);
+        setIsAlreadyInWatchlist(true);
+        showToast({ message: "Added to Watchlist!", type: "success" });
       } else {
         showToast({ message: "Something went wrong.", type: "error" });
       }
@@ -31,20 +51,20 @@ const BtnsResources = ({
       console.error(err);
     }
   };
+
   return (
-    <div className="flex gap-4 ">
+    <div className="flex gap-4 justify-center items-center md:justify-end">
       <Link to={homePage} className="btn" target="_blank">
         See More
       </Link>
       {isLoggedIn && sessionId && (
         <button
           type="button"
-          className="pink-btn"
-          onClick={() => {
-            addToWatchlists("movie", showId);
-          }}
+          className="pink-btn disabled:opacity-50"
+          disabled={isAlreadyInWatchlist}
+          onClick={() => addToWatchlists(isMovie ? "movie" : "tv", showId)}
         >
-          Add to Watchlist
+          {isAlreadyInWatchlist ? "Added to Watchlist" : "Add to Watchlist"}
         </button>
       )}
     </div>

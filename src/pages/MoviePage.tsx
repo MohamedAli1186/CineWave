@@ -37,7 +37,7 @@ const MoviePage = () => {
       stopLoading();
     };
     fetchMovie();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
   if (!movieData || !cast || !similarMovies)
@@ -75,6 +75,7 @@ const MoviePage = () => {
             <BtnsResources
               showId={movieData?.id}
               homePage={movieData?.homepage}
+              isMovie
             />
           </div>
           {movieData?.tagline && (

@@ -17,6 +17,7 @@ import SimilarMovies from "../components/movieTvPageComponents/SimilarMovies";
 import Trailers from "../components/movieTvPageComponents/Trailers";
 import { useAuth } from "../hooks/useAuth";
 import { useLoader } from "../hooks/useLoader";
+import BtnsResources from "../components/movieTvPageComponents/BtnsResources";
 
 const TVPage = () => {
   const { id } = useParams();
@@ -62,7 +63,7 @@ const TVPage = () => {
       stopLoading();
     };
     fetchMovie();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
   if (!tvShowData || !cast || !similar)
@@ -97,22 +98,10 @@ const TVPage = () => {
             <h1 className="text-4xl font-bold md:text-start text-center">
               {tvShowData?.name}
             </h1>
-            <div className="flex gap-4">
-              <Link to={tvShowData?.homepage} className="btn" target="_blank">
-                See More
-              </Link>
-              {isLoggedIn && sessionId && (
-                <button
-                  type="button"
-                  className="pink-btn"
-                  onClick={() => {
-                    addToWatchlists("tv", tvShowData?.id);
-                  }}
-                >
-                  Add to Watchlist
-                </button>
-              )}
-            </div>
+            <BtnsResources
+              showId={tvShowData?.id}
+              homePage={tvShowData?.homepage}
+            />
           </div>
           {tvShowData?.tagline && (
             <p className="text-lg italic md:text-start text-center text-gray-300">

@@ -23,7 +23,7 @@ const TrendingActor = () => {
       {actor?.length && (
         <section className="pt-12 pb-20 w-full ">
           <ShinyText
-            text="Trending Actors"
+            text="Trending People"
             disabled={false}
             speed={3}
             className="mb-8"
