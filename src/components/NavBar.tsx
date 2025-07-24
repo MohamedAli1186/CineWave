@@ -2,7 +2,6 @@ import { Link } from "react-router-dom";
 import logo from "../../public/CineWave.png";
 import { useEffect, useState } from "react";
 import MobileSidebar from "./MobileSidebar";
-import SearchMulti from "./global/SearchMulti";
 import { createToken, getUserDetails } from "../services/tmdb";
 import { showToast } from "./global/Toast";
 import { useAuth } from "../hooks/useAuth";
@@ -130,7 +129,7 @@ const Navbar = () => {
                 type="button"
                 className="pink-btn transition hover:scale-105"
                 onClick={async () => {
-                  await login(requestToken!);
+                  await login();
                 }}
               >
                 Create Session

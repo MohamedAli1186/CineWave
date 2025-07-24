@@ -83,7 +83,7 @@ const MobileSidebar: React.FC<MobileSidebarProps> = ({
               type="button"
               className="pink-btn transition hover:scale-105"
               onClick={async () => {
-                await login(requestToken!);
+                await login();
               }}
             >
               Create Session

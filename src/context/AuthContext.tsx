@@ -1,5 +1,11 @@
 // src/context/AuthContext.tsx
-import { createContext, useEffect, useState, type ReactNode, useCallback } from "react";
+import {
+  createContext,
+  useEffect,
+  useState,
+  type ReactNode,
+  useCallback,
+} from "react";
 import {
   createSessionAuth,
   getSessionId,
@@ -9,7 +15,7 @@ import { showToast } from "../components/global/Toast";
 
 interface AuthContextType {
   sessionId: string | null;
-  login: (token: string) => Promise<void>;
+  login: () => Promise<void>;
   logout: () => void;
   isLoggedIn: boolean;
 }
@@ -28,14 +34,14 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   }, []);
 
-  const login = useCallback(async (token: string) => {
+  const login = useCallback(async () => {
     try {
-      await createSessionAuth(token);
+      await createSessionAuth();
       const newSessionId = getSessionId();
       setSessionId(newSessionId);
-      showToast({ message: 'Successfully logged in!', type: 'success' });
+      showToast({ message: "Successfully logged in!", type: "success" });
     } catch (error) {
-      showToast({ message: 'Login failed. Please try again.', type: 'error' });
+      showToast({ message: "Login failed. Please try again.", type: "error" });
       throw error;
     }
     const newSession = getSessionId();
@@ -47,7 +53,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const logout = useCallback(() => {
     removeSessionId();
     setSessionId(null);
-    showToast({ message: 'Successfully logged out', type: 'success' });
+    showToast({ message: "Successfully logged out", type: "success" });
   }, []);
 
   const value = {
@@ -57,11 +63,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     isLoggedIn,
   };
 
-  return (
-    <AuthContext.Provider value={value}>
-      {children}
-    </AuthContext.Provider>
-  );
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
 
 export { AuthContext };
