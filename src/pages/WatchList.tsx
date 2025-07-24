@@ -15,6 +15,7 @@ import { responsive } from "../utils/cursorResponsive";
 import WishlistCard from "../components/global/WishlistCard";
 import { useAuth } from "../hooks/useAuth";
 import { useLoader } from "../hooks/useLoader";
+import { getCookie } from "../utils/cookies";
 
 const Watchlist = () => {
   const { sessionId, isLoggedIn, login } = useAuth();
@@ -26,7 +27,7 @@ const Watchlist = () => {
   const [moviesPage, setMoviesPage] = useState(1);
   const [tvShowsPage, setTvShowsPage] = useState(1);
   const [featured, setFeatured] = useState<ISearch[]>([]);
-  const requestToken = localStorage.getItem("request_token");
+  const requestToken = getCookie("request_token");
   const { startLoading, stopLoading } = useLoader();
   // Fetch featured movies regardless of session
   useEffect(() => {

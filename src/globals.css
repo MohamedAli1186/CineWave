@@ -86,3 +86,7 @@
 *::-webkit-scrollbar-thumb:active {
   background-color: #d3a5a8;
 }
+
+.react-multiple-carousel__arrow {
+  z-index: 0 !important;
+}

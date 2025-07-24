@@ -1,11 +1,15 @@
 import { Link } from "react-router-dom";
 import logo from "../../public/CineWave.png";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import MobileSidebar from "./MobileSidebar";
 import SearchMulti from "./global/SearchMulti";
-import { createToken } from "../services/tmdb";
+import { createToken, getUserDetails } from "../services/tmdb";
 import { showToast } from "./global/Toast";
 import { useAuth } from "../hooks/useAuth";
+import type { IUser } from "../types/user";
+import ProfileDropDown from "./logoPopup/ProfileDropDown";
+import HoverTextEffect from "./global/HoverText";
+import { getCookie } from "../utils/cookies";
 
 const links = [
   { to: "/", label: "Home" },
@@ -17,8 +21,19 @@ const links = [
 const Navbar = () => {
   const lastPageUrl = window.location.href;
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const requestToken = localStorage.getItem("request_token");
-  const { sessionId, isLoggedIn, login, logout } = useAuth();
+  const requestToken = getCookie("request_token");
+  const { sessionId, isLoggedIn, login } = useAuth();
+  const [user, setUser] = useState<IUser | null>(null);
+  const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      if (!sessionId) return;
+      const res = await getUserDetails(sessionId);
+      setUser(res);
+    };
+    fetchUser();
+  }, [sessionId]);
 
   const fetchSession = async () => {
     const res = await createToken();
@@ -33,7 +48,11 @@ const Navbar = () => {
   return (
     <>
       {/* Mobile Sidebar */}
-      <MobileSidebar open={sidebarOpen} onClose={() => setSidebarOpen(false)} />
+      <MobileSidebar
+        username={user?.username}
+        open={sidebarOpen}
+        onClose={() => setSidebarOpen(false)}
+      />
       <nav className="flex justify-between items-center px-4 md:px-10 py-3 border-b-[0.1px] bg-[#2b1b1b] border-gray-100  z-50 w-full fixed top-0">
         {/* Left: Logo & Hamburger */}
         <div className="flex items-center gap-4 md:gap-10">
@@ -75,16 +94,26 @@ const Navbar = () => {
         <div className="flex items-center">
           {isLoggedIn ? (
             <div className="relative flex items-center gap-4">
-              <SearchMulti />
-              <button
-                type="button"
-                className="pink-btn hidden md:flex"
-                onClick={() => {
-                  logout();
-                }}
-              >
-                Log out
-              </button>
+              {user && (
+                <>
+                  <div className="hidden md:flex">
+                    <HoverTextEffect text={`Hola, ${user.username}`} />
+                  </div>
+                  <img
+                    onClick={() => {
+                      setIsProfileDropdownOpen(!isProfileDropdownOpen);
+                    }}
+                    src={`https://www.gravatar.com/avatar/${user.avatar.gravatar.hash}?s=103&d=identicon`}
+                    alt={user.name}
+                    className="w-10 h-10 rounded-full cursor-pointer hover:scale-105 transition ease-in-out"
+                  />
+                </>
+              )}
+              {isProfileDropdownOpen && (
+                <ProfileDropDown
+                  onClose={() => setIsProfileDropdownOpen(false)}
+                />
+              )}
             </div>
           ) : !requestToken ? (
             <button

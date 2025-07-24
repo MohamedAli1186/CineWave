@@ -3,9 +3,11 @@ import { Link } from "react-router-dom";
 import { showToast } from "./global/Toast";
 import { createToken } from "../services/tmdb";
 import { useAuth } from "../hooks/useAuth";
+import { getCookie } from "../utils/cookies";
 interface MobileSidebarProps {
   open: boolean;
   onClose: () => void;
+  username?: string;
 }
 
 const links = [
@@ -15,10 +17,14 @@ const links = [
   { to: "/watchlist", label: "Watchlist" },
 ];
 
-const MobileSidebar: React.FC<MobileSidebarProps> = ({ open, onClose }) => {
+const MobileSidebar: React.FC<MobileSidebarProps> = ({
+  open,
+  onClose,
+  username,
+}) => {
   const lastPageUrl = window.location.href;
-  const { sessionId, isLoggedIn, login, logout } = useAuth();
-  const requestToken = localStorage.getItem("request_token");
+  const { sessionId, isLoggedIn, login } = useAuth();
+  const requestToken = getCookie("request_token");
 
   const fetchSession = async () => {
     const res = await createToken();
@@ -44,13 +50,12 @@ const MobileSidebar: React.FC<MobileSidebarProps> = ({ open, onClose }) => {
         }`}
         onClick={(e) => e.stopPropagation()}
       >
-        <button
-          className="absolute top-4 right-4 text-white text-2xl"
-          onClick={onClose}
-        >
-          &times;
-        </button>
         <nav className="flex flex-col gap-6 mt-16 px-8">
+          {username && (
+            <p className="text-[#E8B5B8] text-lg font-medium mb-10">
+              Hola, {username}
+            </p>
+          )}
           {links.map((link) => (
             <Link
               key={link.to}
@@ -64,18 +69,6 @@ const MobileSidebar: React.FC<MobileSidebarProps> = ({ open, onClose }) => {
               {link.label}
             </Link>
           ))}
-          {isLoggedIn && sessionId && (
-            <button
-              type="button"
-              className="pink-btn"
-              onClick={() => {
-                logout();
-                showToast({ message: "Logged out successfully" });
-              }}
-            >
-              Log out
-            </button>
-          )}
           {!isLoggedIn && !sessionId && !requestToken && (
             <button
               type="button"

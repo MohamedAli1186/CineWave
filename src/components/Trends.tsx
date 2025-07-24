@@ -10,6 +10,16 @@ const responsive = {
     items: 1,
     slidesToSlide: 1,
   },
+  tablet: {
+    breakpoint: { max: 1024, min: 464 },
+    items: 2,
+    arrows: true,
+  },
+  mobile: {
+    breakpoint: { max: 464, min: 0 },
+    items: 1,
+    arrows: false,
+  },
 };
 const Trends = () => {
   const [trends, setTrends] = useState<IMovies[]>([]);
@@ -25,14 +35,12 @@ const Trends = () => {
     <section className="mx-auto py-10">
       <Carousel
         swipeable={true}
-        draggable={false}
         autoPlay
         infinite
         responsive={responsive}
         ssr={true}
         keyBoardControl={true}
         transitionDuration={500}
-        arrows={true}
         removeArrowOnDeviceType={["mobile"]}
       >
         {trends.map((movie) => (

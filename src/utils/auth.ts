@@ -1,7 +1,15 @@
 import { createSession } from "../services/tmdb";
 import { showToast } from "../components/global/Toast";
+import { deleteCookie, getCookie } from "./cookies";
 
-export const createSessionAuth = async (token: string) => {
+export const createSessionAuth = async () => {
+  const token = getCookie("request_token");
+
+  if (!token) {
+    showToast({ message: "Login expired. Please try again.", type: "error" });
+    return;
+  }
+
   try {
     const data = await createSession(token);
     if (data.success) {
@@ -9,7 +17,7 @@ export const createSessionAuth = async (token: string) => {
       localStorage.setItem("session_id", sessionId);
       showToast({ message: "Session created successfully" });
     } else {
-      console.error("Session creation failed:", data.success);
+      deleteCookie("request_token");
       showToast({ message: "Session creation failed", type: "error" });
     }
   } catch (err) {
@@ -25,6 +33,6 @@ export const getSessionId = () => {
 
 export const removeSessionId = () => {
   localStorage.removeItem("session_id");
-  localStorage.removeItem("request_token");
+  deleteCookie("request_token");
   showToast({ message: "Session removed successfully" });
 };

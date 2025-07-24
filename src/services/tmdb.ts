@@ -12,8 +12,9 @@ import type {
   ITVShows,
   IVideo,
 } from "../types/movies";
-import type { ISession, IToken } from "../types/user";
+import type { ISession, IToken, IUser } from "../types/user";
 import type { IAddWatchlist } from "../types/watchlist";
+import { getCookie, setCookie } from "../utils/cookies";
 
 const API_KEY = import.meta.env.VITE_TMDB_API_KEY;
 const BASE_URL = "https://api.themoviedb.org/3";
@@ -117,19 +118,30 @@ export const searchMulti = async (query: string) => {
 };
 
 export const createToken = async () => {
+  // Check if valid token already exists
+  const existingToken = getCookie("request_token");
+  if (existingToken) {
+    return { success: true, request_token: existingToken };
+  }
+
+  // Otherwise, get a new one
   const res = await fetch(`${BASE_URL}/authentication/token/new`, {
     headers: {
       accept: "application/json",
       Authorization: API_KEY,
     },
   });
+
   const data: IToken = await res.json();
+
   if (data.success) {
     const requestToken = data.request_token;
-    localStorage.setItem("request_token", requestToken);
+    // Set cookie with 60-minute expiry
+    setCookie("request_token", requestToken, 60);
   } else {
     throw new Error("Failed to get request token");
   }
+
   return data;
 };
 
@@ -345,5 +357,16 @@ export const getTVShowVideos = async (id: number) => {
     },
   });
   const data: { id: number; results: IVideo[] } = await res.json();
+  return data;
+};
+
+export const getUserDetails = async (sessionId: string) => {
+  const res = await fetch(`${BASE_URL}/account/null?session_id=${sessionId}`, {
+    headers: {
+      accept: "application/json",
+      Authorization: API_KEY,
+    },
+  });
+  const data: IUser = await res.json();
   return data;
 };
